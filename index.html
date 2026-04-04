@@ -1121,7 +1121,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <script>
 // ── STATE ──
-let dnaVal=1000000000000000000000000000000, coinsVal=1000000000000000000000000000000, dinoCountVal=37;
+let dnaVal=0, coinsVal=100, dinoCountVal=0;
 let activeDino=null, modalHp=88, modalHappy=65, modalDnaReady=90;
 let catFilterVal='all', catSearchVal='';
 let worldView='wild';
@@ -1407,47 +1407,9 @@ const WILD_POOL=[
   {name:'Giganotosaurus',emoji:'🦖',rarity:'Legendary',dnaRate:45,cost:45000,zone:'Mystic'},
 ];
 
-// ── SINGLE FARM DATA SOURCE ──
-const FARM_DINOS=[
-  {name:'Rex',          emoji:'🦖', hp:100, happy:100, dna:90,  rarity:'Legendary'},
-  {name:'Bella',        emoji:'🦕', hp:100, happy:100, dna:55,  rarity:'Rare'},
-  {name:'Spike',        emoji:'🐉', hp:100, happy:100, dna:70,  rarity:'Common'},
-  {name:'Swoop',        emoji:'🦅', hp:100, happy:100, dna:45,  rarity:'Rare'},
-  {name:'Snapjaw',      emoji:'🐊', hp:100, happy:100, dna:20,  rarity:'Legendary'},
-  {name:'Triceratops',  emoji:'🦕', hp:100, happy:100, dna:0,   rarity:'Common'},
-  {name:'Stegosaurus',  emoji:'🐉', hp:100, happy:100, dna:0,   rarity:'Common'},
-  {name:'Ankylosaurus', emoji:'🦴', hp:100, happy:100, dna:0,   rarity:'Common'},
-  {name:'Iguanodon',    emoji:'🦎', hp:100, happy:100, dna:0,   rarity:'Common'},
-  {name:'Brachiosaurus',emoji:'🦕', hp:100, happy:100, dna:0,   rarity:'Uncommon'},
-  {name:'Diplodocus',   emoji:'🦕', hp:100, happy:100, dna:0,   rarity:'Uncommon'},
-  {name:'Parasaurolophus',emoji:'🦖',hp:100,happy:100, dna:0,  rarity:'Uncommon'},
-  {name:'Pterodactyl',  emoji:'🦅', hp:100, happy:100, dna:0,   rarity:'Uncommon'},
-  {name:'Spinosaurus',  emoji:'🐊', hp:100, happy:100, dna:0,   rarity:'Rare'},
-  {name:'Allosaurus',   emoji:'🦖', hp:100, happy:100, dna:0,   rarity:'Rare'},
-  {name:'Mosasaurus',   emoji:'🐟', hp:100, happy:100, dna:0,   rarity:'Rare'},
-  {name:'Carnotaurus',  emoji:'🦎', hp:100, happy:100, dna:0,   rarity:'Rare'},
-  {name:'Velociraptor', emoji:'🦎', hp:100, happy:100, dna:0,   rarity:'Epic'},
-  {name:'Therizinosaurus',emoji:'🦕',hp:100,happy:100, dna:0,  rarity:'Epic'},
-  {name:'Pachycephalosaurus',emoji:'🐉',hp:100,happy:100,dna:0,rarity:'Epic'},
-  {name:'T-Rex',        emoji:'🦖', hp:100, happy:100, dna:0,   rarity:'Legendary'},
-  {name:'Giganotosaurus',emoji:'🦖',hp:100, happy:100, dna:0,   rarity:'Legendary'},
-  {name:'Quetzalcoatlus',emoji:'🦅',hp:100, happy:100, dna:0,   rarity:'Legendary'},
-  {name:'Indominus',    emoji:'🐊', hp:100, happy:100, dna:0,   rarity:'Mythic'},
-  {name:'Dracorex',     emoji:'🐉', hp:100, happy:100, dna:0,   rarity:'Mythic'},
-  {name:'Shadow Raptor',emoji:'🖤', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'Crystalwing',  emoji:'🦋', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'Ghostosaurus', emoji:'👻', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'Nebula Rex',   emoji:'🌌', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'DomingDino',   emoji:'🔥', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'DinoCleme',    emoji:'🦖', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'RexZilla',     emoji:'🌋', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'Aqua Prime',   emoji:'🌊', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'SkyFang',      emoji:'⚡', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'Thornback',    emoji:'🌿', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'Voidscale',    emoji:'🌑', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'ClemeAndDoming',emoji:'👑',hp:100, happy:100, dna:0,   rarity:'OG'},
-];
-const ACTIVE_FARM=FARM_DINOS;
+// ── SINGLE FARM DATA SOURCE (starts empty — earn dinos through gameplay!) ──
+let FARM_DINOS=[];
+let ACTIVE_FARM=FARM_DINOS;
 
 const RARITY_COLOR={'Common':'#6dba7e','Uncommon':'#4db3e8','Rare':'#c07ef5','Epic':'#f5833a','Legendary':'#ffd700','Mythic':'#ff4db8','Farm':'#4CAF60'};
 
@@ -1991,11 +1953,16 @@ function catchFromWorld(id){
   const e=entities.find(x=>String(x.id)===String(id));
   if(!e)return;
   if(coinsVal<e.cost){
-    toast('🪙 Need '+e.cost+' coins! Convert DNA to get more.','rgba(232,64,64,0.5)');
+    toast('Need '+e.cost+' coins! Convert DNA to get more.','rgba(232,64,64,0.5)');
     return;
   }
   coinsVal-=e.cost; dnaVal+=20; dinoCountVal++;
   e.captured=true;
+  // Add to FARM_DINOS (persistent)
+  FARM_DINOS.push({name:e.name, emoji:e.emoji, hp:100, happy:80, dna:0, rarity:e.rarity});
+  ACTIVE_FARM = FARM_DINOS;
+  dinoCountVal = FARM_DINOS.length;
+  window._statsCaught = (window._statsCaught||0) + 1;
   addDinoToIncome(e.name,e.emoji,e.rarity);
   // add to world canvas farm visually
   const farm=ZONE_DEFS.find(z=>z.rarity==='Farm');
@@ -2007,10 +1974,13 @@ function catchFromWorld(id){
     wobble:Math.random()*Math.PI*2,zone:'Your Farm 🏡'
   });
   updateStats(); bump('s-dino'); bump('s-coin'); bump('s-dna');
+  buildIncomeBar(); renderFarm();
   const wc=entities.filter(x=>x.type==='wild'&&!x.captured).length;
   document.getElementById('wild-count').textContent=wc;
-  toast(e.emoji+' '+e.name+' rescued & moved to your farm! +20 🧬','rgba(76,175,96,0.5)');
+  toast(e.emoji+' '+e.name+' rescued & moved to your farm! +20 DNA','rgba(76,175,96,0.5)');
   dismissPopup();
+  // Auto-save to cloud
+  saveGameState();
 }
 
 function collectWorldDNA(id){
@@ -2030,80 +2000,80 @@ function collectWorldDNA(id){
 // CATALOG
 // ══════════════════════════════
 const DINOS=[
-  {id:1,name:'Triceratops',emoji:'🦕',species:'Triceratops horridus',rarity:'Common',dnaRate:6,coinCost:480,dnaUnlock:0,desc:'One of the most iconic plant-eaters ever. Three horns, great starter dino.',stats:{speed:3,strength:5,breed:8,happy:9},owned:true},
-  {id:2,name:'Stegosaurus',emoji:'🐉',species:'Stegosaurus armatus',rarity:'Common',dnaRate:5,coinCost:420,dnaUnlock:0,desc:'The spiked plates on its back are still a mystery. Calm, reliable farmer.',stats:{speed:2,strength:4,breed:7,happy:8},owned:true},
-  {id:3,name:'Ankylosaurus',emoji:'🦴',species:'Ankylosaurus magniventris',rarity:'Common',dnaRate:5,coinCost:560,dnaUnlock:0,desc:'A walking tank with a bone club tail. Perfect for long-term DNA farming.',stats:{speed:2,strength:7,breed:6,happy:7},owned:true},
-  {id:4,name:'Iguanodon',emoji:'🦎',species:'Iguanodon bernissartensis',rarity:'Common',dnaRate:4,coinCost:400,dnaUnlock:0,desc:'One of the first dinosaurs ever discovered. Fast-breeding and easy to keep happy.',stats:{speed:5,strength:4,breed:9,happy:8},owned:true},
-  {id:5,name:'Brachiosaurus',emoji:'🦕',species:'Brachiosaurus altithorax',rarity:'Uncommon',dnaRate:12,coinCost:1650,dnaUnlock:0,desc:'Taller than a 5-story building. Gentle giant, big DNA rewards.',stats:{speed:2,strength:6,breed:4,happy:9},owned:true},
-  {id:6,name:'Diplodocus',emoji:'🦕',species:'Diplodocus longus',rarity:'Uncommon',dnaRate:14,coinCost:1980,dnaUnlock:20,desc:'Longest dinosaur ever. Unlocks a rare DNA combo bonus.',stats:{speed:3,strength:5,breed:5,happy:8},owned:true},
-  {id:7,name:'Parasaurolophus',emoji:'🦖',species:'Parasaurolophus walkeri',rarity:'Uncommon',dnaRate:11,coinCost:1450,dnaUnlock:15,desc:'Super social dino that boosts happiness of all nearby dinos.',stats:{speed:6,strength:4,breed:7,happy:10},owned:true},
-  {id:8,name:'Pterodactyl',emoji:'🦅',species:'Pterodactylus antiquus',rarity:'Uncommon',dnaRate:13,coinCost:2353,dnaUnlock:20,desc:'The original flying reptile. Earns airborne DNA bonuses every 4 hours.',stats:{speed:9,strength:3,breed:6,happy:7},owned:true},
-  {id:9,name:'Spinosaurus',emoji:'🐊',species:'Spinosaurus aegyptiacus',rarity:'Rare',dnaRate:22,coinCost:2800,dnaUnlock:50,desc:'Bigger than T-Rex. The massive spine is like a solar sail. Big DNA earner.',stats:{speed:7,strength:9,breed:4,happy:5},owned:true},
-  {id:10,name:'Allosaurus',emoji:'🦖',species:'Allosaurus fragilis',rarity:'Rare',dnaRate:20,coinCost:2400,dnaUnlock:45,desc:'Apex predator of the Jurassic. DNA multiplier when paired with herbivores.',stats:{speed:8,strength:9,breed:5,happy:4},owned:true},
-  {id:11,name:'Mosasaurus',emoji:'🐟',species:'Mosasaurus hoffmannii',rarity:'Rare',dnaRate:18,coinCost:2000,dnaUnlock:40,desc:'Massive sea reptile. Generates water-type DNA which is extra valuable.',stats:{speed:8,strength:8,breed:5,happy:6},owned:true},
-  {id:12,name:'Carnotaurus',emoji:'🦎',species:'Carnotaurus sastrei',rarity:'Rare',dnaRate:19,coinCost:3450,dnaUnlock:50,desc:'Fastest large carnivore ever. Speed bonus lets it breed 2x faster.',stats:{speed:10,strength:7,breed:9,happy:5},owned:true},
-  {id:13,name:'Velociraptor',emoji:'🦎',species:'Velociraptor mongoliensis',rarity:'Epic',dnaRate:32,coinCost:7000,dnaUnlock:120,desc:'Pack bonus: having 3+ raptors doubles total DNA output.',stats:{speed:10,strength:6,breed:10,happy:6},owned:true},
-  {id:14,name:'Therizinosaurus',emoji:'🦕',species:'Therizinosaurus cheloniformis',rarity:'Epic',dnaRate:28,coinCost:5500,dnaUnlock:100,desc:'1-meter claws! Unlocks a rare plant-DNA extraction bonus.',stats:{speed:4,strength:9,breed:6,happy:7},owned:true},
-  {id:15,name:'Pachycephalosaurus',emoji:'🐉',species:'Pachycephalosaurus wyomingensis',rarity:'Epic',dnaRate:25,coinCost:5000,dnaUnlock:90,desc:'25cm thick skull. Very popular when friends visit your farm.',stats:{speed:7,strength:8,breed:7,happy:8},owned:true},
-  {id:16,name:'T-Rex',emoji:'🦖',species:'Tyrannosaurus Rex',rarity:'Legendary',dnaRate:48,coinCost:55000,dnaUnlock:0,desc:'The king. Earns 25% DNA bonus for ALL other dinos. Essential.',stats:{speed:6,strength:10,breed:3,happy:7},owned:true},
-  {id:17,name:'Giganotosaurus',emoji:'🦖',species:'Giganotosaurus carolinii',rarity:'Legendary',dnaRate:45,coinCost:45000,dnaUnlock:0,desc:'Even bigger than T-Rex. Legendary pair bonus when both are owned.',stats:{speed:7,strength:10,breed:3,happy:6},owned:true},
-  {id:18,name:'Quetzalcoatlus',emoji:'🦅',species:'Quetzalcoatlus northropi',rarity:'Legendary',dnaRate:42,coinCost:35450,dnaUnlock:0,desc:'Largest flying creature ever. Aerial DNA drops of +50 every 6 hours.',stats:{speed:10,strength:7,breed:4,happy:8},owned:true},
-  {id:19,name:'Indominus',emoji:'🐊',species:'Indominus Rex (Hybrid)',rarity:'Mythic',dnaRate:80,coinCost:0,dnaUnlock:7000,desc:'Ultimate hybrid from 5 Legendary species. Most powerful DNA earner.',stats:{speed:9,strength:10,breed:5,happy:5},owned:true},
-  {id:20,name:'Dracorex',emoji:'🐉',species:'Dracorex hogwartsia',rarity:'Mythic',dnaRate:70,coinCost:0,dnaUnlock:6767,desc:'Skull literally looks like a dragon. 3x DNA multiplier.',stats:{speed:8,strength:9,breed:6,happy:9},owned:true},
+  {id:1,name:'Triceratops',emoji:'🦕',species:'Triceratops horridus',rarity:'Common',dnaRate:6,coinCost:480,dnaUnlock:0,desc:'One of the most iconic plant-eaters ever. Three horns, great starter dino.',stats:{speed:3,strength:5,breed:8,happy:9},owned:false},
+  {id:2,name:'Stegosaurus',emoji:'🐉',species:'Stegosaurus armatus',rarity:'Common',dnaRate:5,coinCost:420,dnaUnlock:0,desc:'The spiked plates on its back are still a mystery. Calm, reliable farmer.',stats:{speed:2,strength:4,breed:7,happy:8},owned:false},
+  {id:3,name:'Ankylosaurus',emoji:'🦴',species:'Ankylosaurus magniventris',rarity:'Common',dnaRate:5,coinCost:560,dnaUnlock:0,desc:'A walking tank with a bone club tail. Perfect for long-term DNA farming.',stats:{speed:2,strength:7,breed:6,happy:7},owned:false},
+  {id:4,name:'Iguanodon',emoji:'🦎',species:'Iguanodon bernissartensis',rarity:'Common',dnaRate:4,coinCost:400,dnaUnlock:0,desc:'One of the first dinosaurs ever discovered. Fast-breeding and easy to keep happy.',stats:{speed:5,strength:4,breed:9,happy:8},owned:false},
+  {id:5,name:'Brachiosaurus',emoji:'🦕',species:'Brachiosaurus altithorax',rarity:'Uncommon',dnaRate:12,coinCost:1650,dnaUnlock:0,desc:'Taller than a 5-story building. Gentle giant, big DNA rewards.',stats:{speed:2,strength:6,breed:4,happy:9},owned:false},
+  {id:6,name:'Diplodocus',emoji:'🦕',species:'Diplodocus longus',rarity:'Uncommon',dnaRate:14,coinCost:1980,dnaUnlock:20,desc:'Longest dinosaur ever. Unlocks a rare DNA combo bonus.',stats:{speed:3,strength:5,breed:5,happy:8},owned:false},
+  {id:7,name:'Parasaurolophus',emoji:'🦖',species:'Parasaurolophus walkeri',rarity:'Uncommon',dnaRate:11,coinCost:1450,dnaUnlock:15,desc:'Super social dino that boosts happiness of all nearby dinos.',stats:{speed:6,strength:4,breed:7,happy:10},owned:false},
+  {id:8,name:'Pterodactyl',emoji:'🦅',species:'Pterodactylus antiquus',rarity:'Uncommon',dnaRate:13,coinCost:2353,dnaUnlock:20,desc:'The original flying reptile. Earns airborne DNA bonuses every 4 hours.',stats:{speed:9,strength:3,breed:6,happy:7},owned:false},
+  {id:9,name:'Spinosaurus',emoji:'🐊',species:'Spinosaurus aegyptiacus',rarity:'Rare',dnaRate:22,coinCost:2800,dnaUnlock:50,desc:'Bigger than T-Rex. The massive spine is like a solar sail. Big DNA earner.',stats:{speed:7,strength:9,breed:4,happy:5},owned:false},
+  {id:10,name:'Allosaurus',emoji:'🦖',species:'Allosaurus fragilis',rarity:'Rare',dnaRate:20,coinCost:2400,dnaUnlock:45,desc:'Apex predator of the Jurassic. DNA multiplier when paired with herbivores.',stats:{speed:8,strength:9,breed:5,happy:4},owned:false},
+  {id:11,name:'Mosasaurus',emoji:'🐟',species:'Mosasaurus hoffmannii',rarity:'Rare',dnaRate:18,coinCost:2000,dnaUnlock:40,desc:'Massive sea reptile. Generates water-type DNA which is extra valuable.',stats:{speed:8,strength:8,breed:5,happy:6},owned:false},
+  {id:12,name:'Carnotaurus',emoji:'🦎',species:'Carnotaurus sastrei',rarity:'Rare',dnaRate:19,coinCost:3450,dnaUnlock:50,desc:'Fastest large carnivore ever. Speed bonus lets it breed 2x faster.',stats:{speed:10,strength:7,breed:9,happy:5},owned:false},
+  {id:13,name:'Velociraptor',emoji:'🦎',species:'Velociraptor mongoliensis',rarity:'Epic',dnaRate:32,coinCost:7000,dnaUnlock:120,desc:'Pack bonus: having 3+ raptors doubles total DNA output.',stats:{speed:10,strength:6,breed:10,happy:6},owned:false},
+  {id:14,name:'Therizinosaurus',emoji:'🦕',species:'Therizinosaurus cheloniformis',rarity:'Epic',dnaRate:28,coinCost:5500,dnaUnlock:100,desc:'1-meter claws! Unlocks a rare plant-DNA extraction bonus.',stats:{speed:4,strength:9,breed:6,happy:7},owned:false},
+  {id:15,name:'Pachycephalosaurus',emoji:'🐉',species:'Pachycephalosaurus wyomingensis',rarity:'Epic',dnaRate:25,coinCost:5000,dnaUnlock:90,desc:'25cm thick skull. Very popular when friends visit your farm.',stats:{speed:7,strength:8,breed:7,happy:8},owned:false},
+  {id:16,name:'T-Rex',emoji:'🦖',species:'Tyrannosaurus Rex',rarity:'Legendary',dnaRate:48,coinCost:55000,dnaUnlock:0,desc:'The king. Earns 25% DNA bonus for ALL other dinos. Essential.',stats:{speed:6,strength:10,breed:3,happy:7},owned:false},
+  {id:17,name:'Giganotosaurus',emoji:'🦖',species:'Giganotosaurus carolinii',rarity:'Legendary',dnaRate:45,coinCost:45000,dnaUnlock:0,desc:'Even bigger than T-Rex. Legendary pair bonus when both are owned.',stats:{speed:7,strength:10,breed:3,happy:6},owned:false},
+  {id:18,name:'Quetzalcoatlus',emoji:'🦅',species:'Quetzalcoatlus northropi',rarity:'Legendary',dnaRate:42,coinCost:35450,dnaUnlock:0,desc:'Largest flying creature ever. Aerial DNA drops of +50 every 6 hours.',stats:{speed:10,strength:7,breed:4,happy:8},owned:false},
+  {id:19,name:'Indominus',emoji:'🐊',species:'Indominus Rex (Hybrid)',rarity:'Mythic',dnaRate:80,coinCost:0,dnaUnlock:7000,desc:'Ultimate hybrid from 5 Legendary species. Most powerful DNA earner.',stats:{speed:9,strength:10,breed:5,happy:5},owned:false},
+  {id:20,name:'Dracorex',emoji:'🐉',species:'Dracorex hogwartsia',rarity:'Mythic',dnaRate:70,coinCost:0,dnaUnlock:6767,desc:'Skull literally looks like a dragon. 3x DNA multiplier.',stats:{speed:8,strength:9,breed:6,happy:9},owned:false},
   // ── SECRETS ──
   {id:21,name:'Shadow Raptor',emoji:'🖤',species:'Velociraptor umbra',rarity:'Secret',dnaRate:95,coinCost:0,dnaUnlock:0,
    desc:'A pitch-black raptor that only appears at midnight. Grants a 2x coin multiplier to your entire farm.',
-   stats:{speed:10,strength:10,breed:8,happy:7},owned:true,
-   secret:true,unlocked:true,hint:'🌙 ???',
+   stats:{speed:10,strength:10,breed:8,happy:7},owned:false,
+   secret:true,unlocked:false,hint:'Visit your farm 3 times',
    unlockCondition:'Visit your farm 3 times in one session',unlockKey:'farm_visits_3'},
   {id:22,name:'Crystalwing',emoji:'🦋',species:'Pterosaur crystallus',rarity:'Secret',dnaRate:88,coinCost:0,dnaUnlock:0,
    desc:'A pterosaur with wings made of crystallized amber. Generates DNA even when offline.',
-   stats:{speed:10,strength:6,breed:9,happy:10},owned:true,
-   secret:true,unlocked:true,hint:'🔮 ???',
+   stats:{speed:10,strength:6,breed:9,happy:10},owned:false,
+   secret:true,unlocked:false,hint:'Convert DNA 5 times',
    unlockCondition:'Convert DNA into coins 5 times',unlockKey:'dna_converts_5'},
   {id:23,name:'Ghostosaurus',emoji:'👻',species:'Phantomsaurus spectrus',rarity:'Secret',dnaRate:100,coinCost:0,dnaUnlock:0,
    desc:'A translucent dinosaur that phases through walls. Doubles DNA generation for all Mythic dinos.',
-   stats:{speed:9,strength:8,breed:10,happy:9},owned:true,
-   secret:true,unlocked:true,hint:'👁 ???',
+   stats:{speed:9,strength:8,breed:10,happy:9},owned:false,
+   secret:true,unlocked:false,hint:'Hatch 3 eggs',
    unlockCondition:'Hatch 3 eggs from the Hatchery',unlockKey:'eggs_hatched_3'},
   {id:24,name:'Nebula Rex',emoji:'🌌',species:'Tyrannosaurus cosmicus',rarity:'Secret',dnaRate:120,coinCost:0,dnaUnlock:0,
    desc:'A T-Rex from another dimension covered in stars. The single most powerful DNA earner in existence.',
-   stats:{speed:8,strength:10,breed:7,happy:8},owned:true,
-   secret:true,unlocked:true,hint:'🌠 ???',
+   stats:{speed:8,strength:10,breed:7,happy:8},owned:false,
+   secret:true,unlocked:false,hint:'Own 10+ dinos',
    unlockCondition:'Have 10 or more dinos on your farm at once',unlockKey:'farm_size_10'},
   {id:31,name:'DomingDino',emoji:'🔥',species:'Dominicus ignius rex',rarity:'Secret',dnaRate:115,coinCost:0,dnaUnlock:0,
    desc:'A fire-breathing legend. DomingDino set the entire Mystic Crater ablaze. Nobody has ever tamed one — until now.',
-   stats:{speed:9,strength:10,breed:9,happy:8},owned:true,
-   secret:true,unlocked:true,hint:'🔥 ???',
+   stats:{speed:9,strength:10,breed:9,happy:8},owned:false,
+   secret:true,unlocked:false,hint:'Sell 3 dinos',
    unlockCondition:'Sell 3 dinosaurs in the Market',unlockKey:'market_sells_3'},
   // ── OG ORIGINALS ──
   {id:25,name:'DinoCleme',emoji:'🦖',species:'Rex clementius primus',rarity:'OG',dnaRate:250,coinCost:0,dnaUnlock:100000,
    desc:'The very first dinosaur ever saved in DinoSave history. Still the most respected dino on any farm.',
-   stats:{speed:9,strength:10,breed:10,happy:10},owned:true,og:true,
+   stats:{speed:9,strength:10,breed:10,happy:10},owned:false,og:true,
    ogNumber:'#001',ogColor:'#ff6b35',ogStory:'The OG. The first. The legend.'},
   {id:26,name:'RexZilla',emoji:'🌋',species:'Tyrannosaurus maximus',rarity:'OG',dnaRate:220,coinCost:0,dnaUnlock:150000,
    desc:'A T-Rex so massive it made mountains shake. RexZilla was spotted eating an entire volcano for breakfast.',
-   stats:{speed:7,strength:10,breed:8,happy:7},owned:true,og:true,
+   stats:{speed:7,strength:10,breed:8,happy:7},owned:false,og:true,
    ogNumber:'#002',ogColor:'#ff3d3d',ogStory:'Bigger than big. Badder than bad.'},
   {id:27,name:'Aqua Prime',emoji:'🌊',species:'Mosasaurus regalis',rarity:'OG',dnaRate:210,coinCost:0,dnaUnlock:180000,
    desc:'The original ruler of the ocean. One of only 3 ever recorded.',
-   stats:{speed:10,strength:9,breed:7,happy:9},owned:true,og:true,
+   stats:{speed:10,strength:9,breed:7,happy:9},owned:false,og:true,
    ogNumber:'#003',ogColor:'#00aaff',ogStory:'Ruler of all oceans. Always was.'},
   {id:28,name:'SkyFang',emoji:'⚡',species:'Quetzalcoatlus fulminous',rarity:'OG',dnaRate:200,coinCost:0,dnaUnlock:200000,
    desc:'Flew faster than lightning itself. Generates airborne DNA 24/7 with no cooldown.',
-   stats:{speed:10,strength:8,breed:9,happy:8},owned:true,og:true,
+   stats:{speed:10,strength:8,breed:9,happy:8},owned:false,og:true,
    ogNumber:'#004',ogColor:'#ffe100',ogStory:'Speed of light. Wings of thunder.'},
   {id:29,name:'Thornback',emoji:'🌿',species:'Stegosaurus titanicus',rarity:'OG',dnaRate:190,coinCost:0,dnaUnlock:250000,
    desc:'The gentlest giant who ever lived. Every plant within 100 meters grows faster just being near it.',
-   stats:{speed:4,strength:9,breed:10,happy:10},owned:true,og:true,
+   stats:{speed:4,strength:9,breed:10,happy:10},owned:false,og:true,
    ogNumber:'#005',ogColor:'#00e676',ogStory:'Gentle protector. Guardian of the farm.'},
   {id:30,name:'Voidscale',emoji:'🌑',species:'Spinosaurus abyssus',rarity:'OG',dnaRate:280,coinCost:0,dnaUnlock:300000,
    desc:'A Spinosaurus so ancient its scales absorb light itself. Generates more DNA per second than any creature alive.',
-   stats:{speed:9,strength:10,breed:9,happy:6},owned:true,og:true,
+   stats:{speed:9,strength:10,breed:9,happy:6},owned:false,og:true,
    ogNumber:'#006',ogColor:'#cc00ff',ogStory:'Before time. Beyond rarity.'},
   {id:32,name:'ClemeAndDoming',emoji:'👑',species:'Rex supremus dualis',rarity:'OG',dnaRate:350,coinCost:300000,dnaUnlock:0,
    desc:'The ultimate duo — two legends forged into one unstoppable force. Owning this means you have truly beaten the game.',
-   stats:{speed:10,strength:10,breed:10,happy:10},owned:true,og:true,
+   stats:{speed:10,strength:10,breed:10,happy:10},owned:false,og:true,
    ogNumber:'#007',ogColor:'#ffd700',ogStory:'Two legends. One throne. Forever.'},
 ];
 const TIERS=[
@@ -2199,11 +2169,20 @@ function catSearch(v){catSearchVal=v.toLowerCase();buildCatalog()}
 function handleCatCapture(id){
   const d=DINOS.find(x=>x.id===id);if(!d||d.owned)return;
   if(d.coinCost>0){
-    if(coinsVal>=d.coinCost){coinsVal-=d.coinCost;dnaVal+=20;d.owned=true;dinoCountVal++;updateStats();bump('s-dino');bump('s-coin');bump('s-dna');addDinoToIncome(d.name,d.emoji,d.rarity);toast(d.emoji+' '+d.name+' rescued! +20 🧬 · now earning +'+INCOME_TABLE[d.rarity].coins+' coins/s!','rgba(76,175,96,0.5)');buildCatalog()}
-    else toast('🪙 Need '+d.coinCost.toLocaleString()+' coins — convert DNA to earn more!');
+    if(coinsVal>=d.coinCost){coinsVal-=d.coinCost;dnaVal+=20;d.owned=true;dinoCountVal++;
+      FARM_DINOS.push({name:d.name,emoji:d.emoji,hp:100,happy:100,dna:0,rarity:d.rarity});
+      ACTIVE_FARM=FARM_DINOS;dinoCountVal=FARM_DINOS.length;
+      window._statsCaught=(window._statsCaught||0)+1;
+      updateStats();bump('s-dino');bump('s-coin');bump('s-dna');addDinoToIncome(d.name,d.emoji,d.rarity);renderFarm();buildIncomeBar();
+      toast(d.emoji+' '+d.name+' rescued! +20 DNA · now earning +'+INCOME_TABLE[d.rarity].coins+' coins/s!','rgba(76,175,96,0.5)');buildCatalog();saveGameState()}
+    else toast('Need '+d.coinCost.toLocaleString()+' coins — convert DNA to earn more!');
   } else {
-    if(dnaVal>=d.dnaUnlock){dnaVal-=d.dnaUnlock;d.owned=true;dinoCountVal++;updateStats();bump('s-dino');bump('s-dna');addDinoToIncome(d.name,d.emoji,d.rarity);toast(d.emoji+' '+d.name+' unlocked! Now earning +'+INCOME_TABLE[d.rarity].coins+' coins/s!','rgba(168,85,247,0.5)');buildCatalog()}
-    else toast('🧬 Need '+d.dnaUnlock+' DNA — keep collecting from your farm!');
+    if(dnaVal>=d.dnaUnlock){dnaVal-=d.dnaUnlock;d.owned=true;dinoCountVal++;
+      FARM_DINOS.push({name:d.name,emoji:d.emoji,hp:100,happy:100,dna:0,rarity:d.rarity});
+      ACTIVE_FARM=FARM_DINOS;dinoCountVal=FARM_DINOS.length;
+      updateStats();bump('s-dino');bump('s-dna');addDinoToIncome(d.name,d.emoji,d.rarity);renderFarm();buildIncomeBar();
+      toast(d.emoji+' '+d.name+' unlocked! Now earning +'+INCOME_TABLE[d.rarity].coins+' coins/s!','rgba(168,85,247,0.5)');buildCatalog();saveGameState()}
+    else toast('Need '+d.dnaUnlock+' DNA — keep collecting from your farm!');
   }
 }
 function ogCard(d){
@@ -2248,21 +2227,27 @@ function tryClaimOG(id){
   if(d.coinCost>0){
     if(coinsVal>=d.coinCost){
       coinsVal-=d.coinCost; d.owned=true; dinoCountVal++;
+      FARM_DINOS.push({name:d.name,emoji:d.emoji,hp:100,happy:100,dna:0,rarity:'OG'});
+      ACTIVE_FARM=FARM_DINOS;dinoCountVal=FARM_DINOS.length;
       addDinoToIncome(d.name,d.emoji,'OG');
       updateStats(); bump('s-coin'); bump('s-dino');
-      showOGUnlockToast(d); buildCatalog();
+      renderFarm();buildIncomeBar();
+      showOGUnlockToast(d); buildCatalog(); saveGameState();
     } else {
-      toast('🪙 Need '+d.coinCost.toLocaleString()+' coins to claim '+d.name+'! You have '+coinsVal.toLocaleString()+'.','rgba(255,215,0,.4)');
+      toast('Need '+d.coinCost.toLocaleString()+' coins to claim '+d.name+'! You have '+coinsVal.toLocaleString()+'.','rgba(255,215,0,.4)');
     }
   } else {
     const cost=d.dnaUnlock||100000;
     if(dnaVal>=cost){
       dnaVal-=cost; d.owned=true; dinoCountVal++;
+      FARM_DINOS.push({name:d.name,emoji:d.emoji,hp:100,happy:100,dna:0,rarity:'OG'});
+      ACTIVE_FARM=FARM_DINOS;dinoCountVal=FARM_DINOS.length;
       addDinoToIncome(d.name,d.emoji,'OG');
       updateStats(); bump('s-dna'); bump('s-dino');
-      showOGUnlockToast(d); buildCatalog();
+      renderFarm();buildIncomeBar();
+      showOGUnlockToast(d); buildCatalog(); saveGameState();
     } else {
-      toast('🧬 Need '+cost.toLocaleString()+' DNA to claim '+d.name+'! You have '+dnaVal.toLocaleString()+'.','rgba(255,215,0,.4)');
+      toast('Need '+cost.toLocaleString()+' DNA to claim '+d.name+'! You have '+dnaVal.toLocaleString()+'.','rgba(255,215,0,.4)');
     }
   }
 }
@@ -2995,10 +2980,13 @@ function claimSecret(id){
   const d=DINOS.find(x=>x.id===id);
   if(!d||!d.unlocked||d.owned)return;
   d.owned=true; dinoCountVal++;
+  FARM_DINOS.push({name:d.name,emoji:d.emoji,hp:100,happy:100,dna:0,rarity:'Secret'});
+  ACTIVE_FARM=FARM_DINOS;dinoCountVal=FARM_DINOS.length;
   addDinoToIncome(d.name,d.emoji,'Secret');
   updateStats(); bump('s-dino');
-  toast(d.emoji+' '+d.name+' joined your farm! The secret is yours! 🌌','rgba(192,132,252,.6)');
-  buildCatalog();
+  renderFarm();buildIncomeBar();
+  toast(d.emoji+' '+d.name+' joined your farm! The secret is yours!','rgba(192,132,252,.6)');
+  buildCatalog(); saveGameState();
 }
 
 // ══════════════════════════════
@@ -3080,9 +3068,13 @@ function renderFriendsList(){
 }
 
 function addFriendPrompt(){
-  const name=prompt('Enter friend username:');
-  if(name&&name.trim()){
-    toast('📬 Friend request sent to '+name.trim()+'!','rgba(76,175,96,.5)');
+  if(supabaseClient && currentUser){
+    addFriendByUsername();
+  } else {
+    const name=prompt('Enter friend username:');
+    if(name&&name.trim()){
+      toast('Friend request sent to '+name.trim()+'!','rgba(76,175,96,.5)');
+    }
   }
 }
 
@@ -3312,9 +3304,8 @@ function declineTrade(i){
 }
 
 
-buildIncomeBar();
+// Income & farm rendering moved to enterGame() — starts after login
 startPassiveIncome();
-renderFarm();
 
 // ══════════════════════════════
 // SUPABASE AUTH
@@ -3322,8 +3313,8 @@ renderFarm();
 
 // ⚠️  PASTE YOUR SUPABASE CREDENTIALS HERE
 // Get them from: supabase.com → your project → Settings → API
-const SUPABASE_URL  = 'https://YOUR_PROJECT_ID.supabase.co';
-const SUPABASE_ANON = 'YOUR_ANON_PUBLIC_KEY';
+const SUPABASE_URL  = 'https://pakyudrjcezmasapvwgv.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBha3l1ZHJqY2V6bWFzYXB2d2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTkzNDcsImV4cCI6MjA4OTg3NTM0N30.Da2rsp-CyruTpfa_7utYeKdGxTciI4eRpX3-g0CV0WY';
 
 let supabaseClient = null;
 let currentUser = null;
@@ -3363,7 +3354,7 @@ function showAuthScreen(){
   document.getElementById('game-root').style.display='none';
 }
 
-function enterGame(user){
+async function enterGame(user){
   currentUser = user;
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('game-root').style.display='block';
@@ -3375,7 +3366,364 @@ function enterGame(user){
   document.getElementById('user-avatar').textContent = av;
   document.getElementById('menu-username').textContent = username;
   document.getElementById('menu-email').textContent = user?.email || '';
+
+  // Load saved game from Supabase
+  if(supabaseClient && user?.id){
+    await loadGameState(user.id);
+    // Update online status
+    await supabaseClient.from('profiles').update({is_online:true, last_seen:new Date().toISOString()}).eq('id',user.id);
+    // Start auto-save every 30 seconds
+    if(window._autoSaveInterval) clearInterval(window._autoSaveInterval);
+    window._autoSaveInterval = setInterval(()=> saveGameState(), 30000);
+    // Load real multiplayer data
+    loadRealFriends();
+    loadRealMarket();
+    loadRealTournament();
+    subscribeToRealtime();
+  }
   updateStats();
+  buildIncomeBar();
+  renderFarm();
+}
+
+// ── CLOUD SAVE / LOAD ──
+async function saveGameState(){
+  if(!supabaseClient || !currentUser?.id) return;
+  const saveData = {
+    user_id: currentUser.id,
+    coins: coinsVal,
+    dna: dnaVal,
+    farm_dinos: JSON.stringify(FARM_DINOS),
+    unlocked_secrets: JSON.stringify(DINOS.filter(d=>d.secret&&d.unlocked).map(d=>d.id)),
+    stats: JSON.stringify({
+      totalCaught: window._statsCaught||0,
+      totalHatched: window._statsHatched||0,
+      totalConverted: window._statsConverted||0,
+      totalSold: window._statsSold||0,
+      farmVisits: window._statsFarmVisits||0
+    }),
+    updated_at: new Date().toISOString()
+  };
+  const {error} = await supabaseClient.from('game_saves').upsert(saveData, {onConflict:'user_id'});
+  if(error) console.warn('Save error:', error);
+}
+
+async function loadGameState(userId){
+  if(!supabaseClient) return;
+  const {data, error} = await supabaseClient.from('game_saves').select('*').eq('user_id', userId).single();
+  if(error || !data){
+    console.log('No save found — starting fresh!');
+    // New player: 100 coins, 0 DNA, 0 dinos
+    coinsVal = 100;
+    dnaVal = 0;
+    FARM_DINOS.length = 0;
+    ACTIVE_FARM = FARM_DINOS;
+    dinoCountVal = 0;
+    return;
+  }
+  // Restore saved state
+  coinsVal = data.coins || 100;
+  dnaVal = data.dna || 0;
+  const savedDinos = typeof data.farm_dinos === 'string' ? JSON.parse(data.farm_dinos) : (data.farm_dinos || []);
+  FARM_DINOS.length = 0;
+  savedDinos.forEach(d => FARM_DINOS.push(d));
+  ACTIVE_FARM = FARM_DINOS;
+  dinoCountVal = FARM_DINOS.length;
+  // Restore stats
+  const stats = typeof data.stats === 'string' ? JSON.parse(data.stats) : (data.stats || {});
+  window._statsCaught = stats.totalCaught || 0;
+  window._statsHatched = stats.totalHatched || 0;
+  window._statsConverted = stats.totalConverted || 0;
+  window._statsSold = stats.totalSold || 0;
+  window._statsFarmVisits = stats.farmVisits || 0;
+  // Restore unlocked secrets
+  const secrets = typeof data.unlocked_secrets === 'string' ? JSON.parse(data.unlocked_secrets) : (data.unlocked_secrets || []);
+  secrets.forEach(id => {
+    const d = DINOS.find(x => x.id === id);
+    if(d) d.unlocked = true;
+  });
+  // Sync DINOS catalog owned status with loaded farm
+  DINOS.forEach(d => { d.owned = FARM_DINOS.some(f => f.name === d.name); });
+  console.log('Game loaded! Coins:', coinsVal, 'DNA:', dnaVal, 'Dinos:', FARM_DINOS.length);
+}
+
+// ── REAL FRIENDS SYSTEM ──
+async function loadRealFriends(){
+  if(!supabaseClient || !currentUser?.id) return;
+  const {data} = await supabaseClient.from('friends')
+    .select('*, friend:profiles!friends_friend_id_fkey(id,username,avatar,is_online,last_seen), requester:profiles!friends_user_id_fkey(id,username,avatar,is_online,last_seen)')
+    .or(`user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`);
+  if(!data) return;
+  window._realFriends = data.map(f => {
+    const isRequester = f.user_id === currentUser.id;
+    const profile = isRequester ? f.friend : f.requester;
+    return {
+      id: profile?.id,
+      name: profile?.username || 'Unknown',
+      emoji: profile?.avatar || '🦖',
+      online: profile?.is_online || false,
+      status: f.status,
+      friendshipId: f.id
+    };
+  });
+  renderRealFriendsList();
+}
+
+function renderRealFriendsList(){
+  const list = document.getElementById('friends-list');
+  if(!list || !window._realFriends) return;
+  const accepted = window._realFriends.filter(f => f.status === 'accepted');
+  const pending = window._realFriends.filter(f => f.status === 'pending');
+  list.innerHTML = accepted.map(f => `
+    <div class="friend-card">
+      <div class="friend-avatar">${f.emoji}</div>
+      <div class="friend-info">
+        <div class="friend-name">${f.name}</div>
+        <div class="friend-status" style="color:${f.online?'var(--green-light)':'var(--text3)'}">${f.online?'Online':'Offline'}</div>
+      </div>
+      <button class="btn btn-ghost" onclick="sendTradeToReal('${f.id}','${f.name}')">Trade</button>
+      <button class="btn btn-ghost" onclick="openRealChat('${f.id}','${f.name}')">Chat</button>
+    </div>
+  `).join('') + (pending.length ? '<div style="margin-top:12px;font-size:12px;color:var(--text2);font-weight:800">PENDING REQUESTS</div>' + pending.map(f => `
+    <div class="friend-card">
+      <div class="friend-avatar">${f.emoji}</div>
+      <div class="friend-info"><div class="friend-name">${f.name}</div><div class="friend-status">Pending</div></div>
+      <button class="btn btn-green" onclick="acceptFriend('${f.friendshipId}')">Accept</button>
+      <button class="btn btn-ghost" onclick="declineFriend('${f.friendshipId}')">Decline</button>
+    </div>
+  `).join('') : '');
+  if(!accepted.length && !pending.length) list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)">No friends yet. Add friends by username!</div>';
+}
+
+async function addFriendByUsername(){
+  const input = prompt('Enter friend username:');
+  if(!input || !supabaseClient) return;
+  const {data:profile} = await supabaseClient.from('profiles').select('id').eq('username', input.trim()).single();
+  if(!profile){ toast('User not found!'); return; }
+  if(profile.id === currentUser.id){ toast('You cannot add yourself!'); return; }
+  const {error} = await supabaseClient.from('friends').insert({user_id: currentUser.id, friend_id: profile.id});
+  if(error){ toast('Could not send request: ' + (error.message.includes('duplicate') ? 'Already sent!' : error.message)); return; }
+  toast('Friend request sent!');
+  loadRealFriends();
+}
+
+async function acceptFriend(friendshipId){
+  await supabaseClient.from('friends').update({status:'accepted'}).eq('id', friendshipId);
+  toast('Friend accepted!');
+  loadRealFriends();
+}
+async function declineFriend(friendshipId){
+  await supabaseClient.from('friends').update({status:'declined'}).eq('id', friendshipId);
+  toast('Friend declined.');
+  loadRealFriends();
+}
+
+// ── REAL CHAT ──
+async function openRealChat(friendId, friendName){
+  window._chatFriendId = friendId;
+  window._chatFriendName = friendName;
+  // Load messages
+  const {data} = await supabaseClient.from('messages')
+    .select('*')
+    .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${friendId}),and(sender_id.eq.${friendId},receiver_id.eq.${currentUser.id})`)
+    .order('created_at', {ascending:true})
+    .limit(50);
+  const chatArea = document.getElementById('msg-chat-area');
+  if(!chatArea) return;
+  chatArea.innerHTML = (data||[]).map(m => `
+    <div style="margin-bottom:8px;text-align:${m.sender_id===currentUser.id?'right':'left'}">
+      <div style="display:inline-block;background:${m.sender_id===currentUser.id?'var(--green)':'var(--card2)'};padding:8px 14px;border-radius:14px;max-width:70%;font-size:13px">${m.content}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px">${new Date(m.created_at).toLocaleTimeString()}</div>
+    </div>
+  `).join('') || '<div style="text-align:center;color:var(--text3);padding:20px">No messages yet. Say hi!</div>';
+  chatArea.scrollTop = chatArea.scrollHeight;
+  // Mark as read
+  if(data?.length) await supabaseClient.from('messages').update({read:true}).eq('sender_id',friendId).eq('receiver_id',currentUser.id);
+  // Switch to chat tab
+  const tabs = document.querySelectorAll('.friends-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  if(tabs[1]) tabs[1].classList.add('active');
+  document.getElementById('friends-list-panel').style.display='none';
+  document.getElementById('friends-msg-panel').style.display='block';
+  document.getElementById('msg-friend-name').textContent = friendName;
+}
+
+async function sendRealMessage(){
+  if(!window._chatFriendId || !supabaseClient) return;
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if(!text) return;
+  await supabaseClient.from('messages').insert({sender_id:currentUser.id, receiver_id:window._chatFriendId, content:text});
+  input.value = '';
+  openRealChat(window._chatFriendId, window._chatFriendName);
+}
+
+// ── REAL MARKET ──
+async function loadRealMarket(){
+  if(!supabaseClient) return;
+  const {data} = await supabaseClient.from('market_listings')
+    .select('*, seller:profiles!market_listings_seller_id_fkey(username,avatar)')
+    .order('created_at',{ascending:false}).limit(20);
+  window._realMarketListings = data || [];
+  renderRealMarket();
+}
+
+function renderRealMarket(){
+  const container = document.getElementById('market-buy-list');
+  if(!container || !window._realMarketListings) return;
+  if(!window._realMarketListings.length){
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3)">No listings yet. Be the first to sell!</div>';
+    return;
+  }
+  container.innerHTML = window._realMarketListings.map(l => `
+    <div class="market-card">
+      <div style="font-size:28px">${l.item_emoji}</div>
+      <div class="market-card-info">
+        <div class="market-card-name">${l.item_name}</div>
+        <div class="market-card-seller">by ${l.seller?.username||'Unknown'} ${l.seller?.avatar||''}</div>
+        <div class="rarity-tag rt-${l.item_rarity?.toLowerCase()}">${l.item_rarity}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:16px;font-weight:800;color:var(--amber)">${l.price} coins</div>
+        ${l.seller_id !== currentUser?.id ? `<button class="btn btn-green" style="margin-top:6px" onclick="buyFromMarket('${l.id}',${l.price},'${l.item_name}','${l.item_emoji}','${l.item_rarity}')">Buy</button>` : `<button class="btn btn-ghost" style="margin-top:6px" onclick="removeMyListing('${l.id}')">Remove</button>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+async function sellOnMarket(dinoName, dinoEmoji, dinoRarity, price){
+  if(!supabaseClient || !currentUser) return;
+  await supabaseClient.from('market_listings').insert({
+    seller_id: currentUser.id,
+    item_type: 'dino',
+    item_name: dinoName,
+    item_emoji: dinoEmoji,
+    item_rarity: dinoRarity,
+    price: price
+  });
+  toast('Listed ' + dinoName + ' on market!');
+  loadRealMarket();
+  saveGameState();
+}
+
+async function buyFromMarket(listingId, price, name, emoji, rarity){
+  if(coinsVal < price){ toast('Not enough coins!'); return; }
+  // Remove listing
+  const {error} = await supabaseClient.from('market_listings').delete().eq('id', listingId);
+  if(error){ toast('Item already sold!'); return; }
+  coinsVal -= price;
+  FARM_DINOS.push({name, emoji, hp:100, happy:100, dna:0, rarity});
+  dinoCountVal = FARM_DINOS.length;
+  updateStats();
+  renderFarm();
+  buildIncomeBar();
+  toast('Bought ' + name + '!');
+  loadRealMarket();
+  saveGameState();
+}
+
+async function removeMyListing(listingId){
+  await supabaseClient.from('market_listings').delete().eq('id', listingId);
+  toast('Listing removed.');
+  loadRealMarket();
+}
+
+// ── REAL TOURNAMENT ──
+async function loadRealTournament(){
+  if(!supabaseClient) return;
+  const tournId = 'weekly-' + getWeekId();
+  const {data} = await supabaseClient.from('tournament_scores')
+    .select('*').eq('tournament_id', tournId)
+    .order('dna_earned',{ascending:false}).limit(20);
+  window._realTournament = data || [];
+  window._tournId = tournId;
+  renderRealTournament();
+}
+
+function getWeekId(){
+  const d = new Date();
+  const start = new Date(d.getFullYear(), 0, 1);
+  const week = Math.ceil(((d - start) / 86400000 + start.getDay() + 1) / 7);
+  return d.getFullYear() + '-W' + week;
+}
+
+function renderRealTournament(){
+  const list = document.getElementById('tourn-leaderboard');
+  if(!list || !window._realTournament) return;
+  list.innerHTML = window._realTournament.map((p, i) => `
+    <div class="tourn-row ${p.user_id === currentUser?.id ? 'tourn-you' : ''}">
+      <span class="tourn-rank">${i+1}</span>
+      <span class="tourn-avatar">${p.avatar||'🦖'}</span>
+      <span class="tourn-name">${p.username}${p.user_id===currentUser?.id?' (You)':''}</span>
+      <span class="tourn-dna">${p.dna_earned} DNA</span>
+    </div>
+  `).join('') || '<div style="text-align:center;padding:20px;color:var(--text3)">No participants yet. Join the tournament!</div>';
+}
+
+async function joinRealTournament(){
+  if(!supabaseClient || !currentUser) return;
+  const username = currentUser.user_metadata?.username || currentUser.email?.split('@')[0] || 'Player';
+  const {error} = await supabaseClient.from('tournament_scores').upsert({
+    user_id: currentUser.id,
+    username: username,
+    avatar: document.getElementById('user-avatar')?.textContent || '🦖',
+    dna_earned: 0,
+    tournament_id: window._tournId || 'weekly-' + getWeekId()
+  }, {onConflict:'user_id,tournament_id'});
+  if(error) console.warn('Tournament join error:', error);
+  else toast('Joined tournament!');
+  loadRealTournament();
+}
+
+async function updateTournamentScore(dnaEarned){
+  if(!supabaseClient || !currentUser || !window._tournId) return;
+  const existing = window._realTournament?.find(p => p.user_id === currentUser.id);
+  if(!existing) return;
+  await supabaseClient.from('tournament_scores').update({
+    dna_earned: (existing.dna_earned || 0) + dnaEarned,
+    updated_at: new Date().toISOString()
+  }).eq('user_id', currentUser.id).eq('tournament_id', window._tournId);
+}
+
+// ── REAL-TIME SUBSCRIPTIONS ──
+function subscribeToRealtime(){
+  if(!supabaseClient || !currentUser) return;
+  // Listen for new messages
+  supabaseClient.channel('messages-' + currentUser.id)
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'messages', filter:`receiver_id=eq.${currentUser.id}`}, payload => {
+      toast('New message received!');
+      if(window._chatFriendId === payload.new.sender_id) openRealChat(window._chatFriendId, window._chatFriendName);
+    }).subscribe();
+  // Listen for trade requests
+  supabaseClient.channel('trades-' + currentUser.id)
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'trades', filter:`to_id=eq.${currentUser.id}`}, payload => {
+      toast('New trade request!');
+    }).subscribe();
+  // Listen for friend requests
+  supabaseClient.channel('friends-' + currentUser.id)
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'friends', filter:`friend_id=eq.${currentUser.id}`}, payload => {
+      toast('New friend request!');
+      loadRealFriends();
+    }).subscribe();
+  // Listen for market changes
+  supabaseClient.channel('market-live')
+    .on('postgres_changes', {event:'*', schema:'public', table:'market_listings'}, () => {
+      loadRealMarket();
+    }).subscribe();
+}
+
+// ── REAL TRADES ──
+async function sendTradeToReal(friendId, friendName){
+  if(!FARM_DINOS.length){ toast('You have no dinos to trade!'); return; }
+  const offerDino = prompt('Which dino do you want to offer? (name)\nYour dinos: ' + FARM_DINOS.map(d=>d.name).join(', '));
+  if(!offerDino) return;
+  const wantDino = prompt('Which dino do you want from ' + friendName + '?');
+  if(!wantDino) return;
+  const found = FARM_DINOS.find(d => d.name.toLowerCase() === offerDino.toLowerCase());
+  if(!found){ toast('You don\'t have that dino!'); return; }
+  await supabaseClient.from('trades').insert({from_id:currentUser.id, to_id:friendId, offer_dino:offerDino, want_dino:wantDino});
+  toast('Trade sent to ' + friendName + '!');
+  saveGameState();
 }
 
 // ── AUTH FORMS ──
@@ -3452,10 +3800,19 @@ async function handleForgotPassword(){
 
 async function handleSignOut(){
   toggleUserMenu();
+  // Save game and set offline before signing out
+  if(supabaseClient && currentUser?.id){
+    await saveGameState();
+    await supabaseClient.from('profiles').update({is_online:false, last_seen:new Date().toISOString()}).eq('id',currentUser.id);
+    if(window._autoSaveInterval) clearInterval(window._autoSaveInterval);
+  }
   if(supabaseClient) await supabaseClient.auth.signOut();
   currentUser=null;
+  // Reset game state
+  coinsVal=100; dnaVal=0; dinoCountVal=0;
+  FARM_DINOS.length=0;
   showAuthScreen();
-  toast('👋 Signed out. See you next time!');
+  toast('Signed out. See you next time!');
 }
 
 // ── USER MENU ──
@@ -3859,6 +4216,24 @@ function toggleFullscreen(){
 document.addEventListener('fullscreenchange',()=>{
   const btn=document.getElementById('fs-btn');
   if(btn) btn.textContent=document.fullscreenElement?'✕':'⛶';
+});
+
+// Save game when user leaves the page
+window.addEventListener('beforeunload', ()=>{
+  if(supabaseClient && currentUser?.id){
+    // Use sendBeacon for reliable save on page close
+    const saveData = {
+      user_id: currentUser.id,
+      coins: coinsVal,
+      dna: dnaVal,
+      farm_dinos: JSON.stringify(FARM_DINOS),
+      updated_at: new Date().toISOString()
+    };
+    navigator.sendBeacon(
+      SUPABASE_URL + '/rest/v1/game_saves?on_conflict=user_id',
+      new Blob([JSON.stringify(saveData)], {type:'application/json'})
+    );
+  }
 });
 
 // Start auth check on load
