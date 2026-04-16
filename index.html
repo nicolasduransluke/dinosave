@@ -1921,7 +1921,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 <script>
 // ── STATE ──
-let dnaVal=1000000000000000000000000000000, coinsVal=1000000000000000000000000000000, dinoCountVal=37;
+let dnaVal=0, coinsVal=100, dinoCountVal=0;
 let activeDino=null, modalHp=88, modalHappy=65, modalDnaReady=90;
 let catFilterVal='all', catSearchVal='';
 let worldView='wild';
@@ -2213,45 +2213,7 @@ const WILD_POOL=[
 ];
 
 // ── SINGLE FARM DATA SOURCE ──
-const FARM_DINOS=[
-  {name:'Rex',          emoji:'🦖', hp:100, happy:100, dna:90,  rarity:'Legendary'},
-  {name:'Bella',        emoji:'🦕', hp:100, happy:100, dna:55,  rarity:'Rare'},
-  {name:'Spike',        emoji:'🐉', hp:100, happy:100, dna:70,  rarity:'Common'},
-  {name:'Swoop',        emoji:'🦅', hp:100, happy:100, dna:45,  rarity:'Rare'},
-  {name:'Snapjaw',      emoji:'🐊', hp:100, happy:100, dna:20,  rarity:'Legendary'},
-  {name:'Triceratops',  emoji:'🦕', hp:100, happy:100, dna:0,   rarity:'Common'},
-  {name:'Stegosaurus',  emoji:'🐉', hp:100, happy:100, dna:0,   rarity:'Common'},
-  {name:'Ankylosaurus', emoji:'🦴', hp:100, happy:100, dna:0,   rarity:'Common'},
-  {name:'Iguanodon',    emoji:'🦎', hp:100, happy:100, dna:0,   rarity:'Common'},
-  {name:'Brachiosaurus',emoji:'🦕', hp:100, happy:100, dna:0,   rarity:'Uncommon'},
-  {name:'Diplodocus',   emoji:'🦕', hp:100, happy:100, dna:0,   rarity:'Uncommon'},
-  {name:'Parasaurolophus',emoji:'🦖',hp:100,happy:100, dna:0,  rarity:'Uncommon'},
-  {name:'Pterodactyl',  emoji:'🦅', hp:100, happy:100, dna:0,   rarity:'Uncommon'},
-  {name:'Spinosaurus',  emoji:'🐊', hp:100, happy:100, dna:0,   rarity:'Rare'},
-  {name:'Allosaurus',   emoji:'🦖', hp:100, happy:100, dna:0,   rarity:'Rare'},
-  {name:'Mosasaurus',   emoji:'🐟', hp:100, happy:100, dna:0,   rarity:'Rare'},
-  {name:'Carnotaurus',  emoji:'🦎', hp:100, happy:100, dna:0,   rarity:'Rare'},
-  {name:'Velociraptor', emoji:'🦎', hp:100, happy:100, dna:0,   rarity:'Epic'},
-  {name:'Therizinosaurus',emoji:'🦕',hp:100,happy:100, dna:0,  rarity:'Epic'},
-  {name:'Pachycephalosaurus',emoji:'🐉',hp:100,happy:100,dna:0,rarity:'Epic'},
-  {name:'T-Rex',        emoji:'🦖', hp:100, happy:100, dna:0,   rarity:'Legendary'},
-  {name:'Giganotosaurus',emoji:'🦖',hp:100, happy:100, dna:0,   rarity:'Legendary'},
-  {name:'Quetzalcoatlus',emoji:'🦅',hp:100, happy:100, dna:0,   rarity:'Legendary'},
-  {name:'Indominus',    emoji:'🐊', hp:100, happy:100, dna:0,   rarity:'Mythic'},
-  {name:'Dracorex',     emoji:'🐉', hp:100, happy:100, dna:0,   rarity:'Mythic'},
-  {name:'Shadow Raptor',emoji:'🖤', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'Crystalwing',  emoji:'🦋', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'Ghostosaurus', emoji:'👻', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'Nebula Rex',   emoji:'🌌', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'DomingDino',   emoji:'🔥', hp:100, happy:100, dna:0,   rarity:'Secret'},
-  {name:'DinoCleme',    emoji:'🦖', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'RexZilla',     emoji:'🌋', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'Aqua Prime',   emoji:'🌊', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'SkyFang',      emoji:'⚡', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'Thornback',    emoji:'🌿', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'Voidscale',    emoji:'🌑', hp:100, happy:100, dna:0,   rarity:'OG'},
-  {name:'ClemeAndDoming',emoji:'👑',hp:100, happy:100, dna:0,   rarity:'OG'},
-];
+const FARM_DINOS=[];
 const ACTIVE_FARM=FARM_DINOS;
 
 const RARITY_COLOR={'Common':'#6dba7e','Uncommon':'#4db3e8','Rare':'#c07ef5','Epic':'#f5833a','Legendary':'#ffd700','Mythic':'#ff4db8','Farm':'#4CAF60'};
@@ -3471,18 +3433,14 @@ const EGG_TYPES=[
 // Incubators — 4 slots, slot 0 pre-filled, slot 3 locked
 const MAX_INCUBATORS=4;
 let incubators=[
-  {id:0, egg:EGG_TYPES[0], progress:45, state:'incubating', startTime:Date.now()-13500, result:null},
-  {id:1, egg:null,         progress:0,  state:'empty',       startTime:null,            result:null},
-  {id:2, egg:null,         progress:0,  state:'empty',       startTime:null,            result:null},
-  {id:3, egg:null,         progress:0,  state:'locked',      startTime:null,            result:null},
+  {id:0, egg:null, progress:0, state:'empty',  startTime:null, result:null},
+  {id:1, egg:null, progress:0, state:'empty',  startTime:null, result:null},
+  {id:2, egg:null, progress:0, state:'locked', startTime:null, result:null},
+  {id:3, egg:null, progress:0, state:'locked', startTime:null, result:null},
 ];
 
 // Player egg inventory
-let eggInventory=[
-  {typeId:'uncommon', qty:2},
-  {typeId:'rare',     qty:1},
-  {typeId:'mystery',  qty:3},
-];
+let eggInventory=[];
 
 let hatchState=null; // { incuIdx, stage } stage: 'shake'|'crack'|'reveal'|'done'
 let incuTickInterval=null;
@@ -4521,6 +4479,86 @@ function showAuthScreen(){
   document.getElementById('game-root').style.display='none';
 }
 
+// ── CLOUD SAVE / LOAD ──
+let _saveDebounce=null;
+let _autoSaveInterval=null;
+async function saveGameState(){
+  if(!supabaseClient || !currentUser?.id) return;
+  const cap = v => { const n=Number(v)||0; return Math.max(0, Math.min(n, 9e18)); };
+  const saveData = {
+    user_id: currentUser.id,
+    coins: cap(coinsVal),
+    dna: cap(dnaVal),
+    farm_dinos: FARM_DINOS,
+    egg_inventory: eggInventory,
+    incubators: incubators.map(i => ({
+      id: i.id, state: i.state, progress: i.progress,
+      startTime: i.startTime, eggId: i.egg?.id || null, result: i.result
+    })),
+    unlocked_secrets: (typeof DINOS!=='undefined')
+      ? DINOS.filter(d=>d.secret && d.unlocked).map(d=>d.id) : [],
+    updated_at: new Date().toISOString()
+  };
+  const {error} = await supabaseClient.from('game_saves').upsert(saveData, {onConflict:'user_id'});
+  if(error) console.warn('Save error:', error);
+}
+
+function scheduleSave(){
+  if(_saveDebounce) clearTimeout(_saveDebounce);
+  _saveDebounce = setTimeout(saveGameState, 2000);
+}
+
+async function loadGameState(userId){
+  if(!supabaseClient || !userId) return;
+  const {data, error} = await supabaseClient.from('game_saves')
+    .select('*').eq('user_id', userId).maybeSingle();
+  if(error){ console.warn('Load error:', error); return; }
+  if(!data){
+    // Brand-new user — persist the fresh defaults
+    await saveGameState();
+    try{ updateStats(); }catch(e){}
+    try{ renderFarm(); }catch(e){}
+    try{ buildIncomeBar(); }catch(e){}
+    return;
+  }
+  coinsVal = Number(data.coins) || 0;
+  dnaVal   = Number(data.dna)   || 0;
+  const fd = Array.isArray(data.farm_dinos) ? data.farm_dinos : [];
+  FARM_DINOS.length = 0;
+  fd.forEach(d => FARM_DINOS.push(d));
+  dinoCountVal = FARM_DINOS.length;
+  const ei = Array.isArray(data.egg_inventory) ? data.egg_inventory : [];
+  eggInventory.length = 0;
+  ei.forEach(e => eggInventory.push(e));
+  const ic = Array.isArray(data.incubators) ? data.incubators : null;
+  if(ic){
+    ic.forEach((saved, i) => {
+      if(!incubators[i]) return;
+      incubators[i].state     = saved.state || 'empty';
+      incubators[i].progress  = saved.progress || 0;
+      incubators[i].startTime = saved.startTime || null;
+      incubators[i].result    = saved.result || null;
+      incubators[i].egg = (saved.eggId && typeof EGG_TYPES!=='undefined')
+        ? (EGG_TYPES.find(t=>t.id===saved.eggId) || null) : null;
+    });
+  }
+  const secrets = Array.isArray(data.unlocked_secrets) ? data.unlocked_secrets : [];
+  if(typeof DINOS!=='undefined'){
+    secrets.forEach(id => { const d=DINOS.find(x=>x.id===id); if(d) d.unlocked=true; });
+    DINOS.forEach(d => { d.owned = FARM_DINOS.some(f => f.name === d.name); });
+  }
+  try{ updateStats(); }catch(e){}
+  try{ renderFarm(); }catch(e){}
+  try{ buildIncomeBar(); }catch(e){}
+  console.log('✅ Loaded save — coins:', coinsVal, 'dna:', dnaVal, 'dinos:', FARM_DINOS.length);
+}
+
+function startAutoSave(){
+  if(_autoSaveInterval) clearInterval(_autoSaveInterval);
+  _autoSaveInterval = setInterval(() => { if(currentUser) saveGameState(); }, 30000);
+}
+window.addEventListener('beforeunload', () => { if(currentUser) saveGameState(); });
+
 // ── OWNER BADGE ──
 const OWNER_EMAILS=['nicolasduransluke@gmail.com','admin@dinosaave.com'];
 function isOwner(email){ return OWNER_EMAILS.includes((email||'').toLowerCase()); }
@@ -4530,6 +4568,10 @@ function enterGame(user){
   currentUser = user;
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('game-root').style.display='block';
+
+  // Load cloud save (per-user state) then start periodic auto-save
+  loadGameState(user?.id);
+  startAutoSave();
 
   // ── Restore saved data (multi-storage for reliability) ──
   if(restoreVIP(user?.email)) isVIP=true;
