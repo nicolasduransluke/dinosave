@@ -1939,6 +1939,72 @@ const INCOME_TABLE={
   OG:        { coins:400, dna:100 },
 };
 
+// ── ECONOMY V2 ──
+const ECONOMY_V2 = true;
+
+// Precios unificados por rarity (reemplazan coinCost/dnaUnlock en DINOS[])
+const PRICES_V2 = {
+  Common:    { coin: 500,     dna: 0      },
+  Uncommon:  { coin: 3000,    dna: 0      },
+  Rare:      { coin: 25000,   dna: 0      },
+  Epic:      { coin: 250000,  dna: 0      },
+  Legendary: { coin: 2500000, dna: 100000 },
+};
+
+// Cómo se obtiene cada rarity. 'direct' = compra en catálogo.
+const ACQUISITION_V2 = {
+  Common:    'direct',
+  Uncommon:  'direct',
+  Rare:      'direct',
+  Epic:      'direct',
+  Legendary: 'direct',
+  Mythic:    'breeding',   // Fase 4: cruzar 2 Legendary
+  Secret:    'challenge',  // unlockCondition por dino
+  OG:        'event',      // Jurassic Event mensual
+};
+
+// Prerequisitos de compra (cantidad de la rarity anterior, con tiempo owned)
+const PREREQS_V2 = {
+  Rare:      { rarity: 'Uncommon', count: 3, hoursOwned: 0  },
+  Epic:      { rarity: 'Rare',     count: 2, hoursOwned: 24 },
+  Legendary: { rarity: 'Epic',     count: 3, hoursOwned: 72 },
+};
+
+function getV2Price(dino){
+  if(!ECONOMY_V2) return { coin: dino.coinCost||0, dna: dino.dnaUnlock||0 };
+  return PRICES_V2[dino.rarity] || null;
+}
+
+function canBuyDino(dino){
+  if(!ECONOMY_V2) return { ok: true };
+  const source = ACQUISITION_V2[dino.rarity];
+  if(source !== 'direct'){
+    return { ok: false, reason: source, rarity: dino.rarity };
+  }
+  const req = PREREQS_V2[dino.rarity];
+  if(!req) return { ok: true };
+  const now = Date.now();
+  const owned = FARM_DINOS.filter(d => {
+    if(d.rarity !== req.rarity) return false;
+    const since = d.owned_since || 0;
+    return (now - since) >= req.hoursOwned * 3600 * 1000;
+  }).length;
+  if(owned < req.count){
+    return {
+      ok: false, reason: 'prereq',
+      msg: `Necesitás ${req.count} ${req.rarity}${req.hoursOwned?' con '+req.hoursOwned+'h de antigüedad':''} (tenés ${owned})`
+    };
+  }
+  return { ok: true };
+}
+
+function blockedAcquisitionMsg(reason, rarity){
+  if(reason === 'breeding') return '🧬 Los '+rarity+' solo se consiguen cruzando 2 Legendary en el Centro de Crianza.';
+  if(reason === 'challenge') return '🔒 Los '+rarity+' se desbloquean completando challenges especiales.';
+  if(reason === 'event') return '👑 Los '+rarity+' solo en el Jurassic Event (una vez al mes).';
+  return '🔒 No disponible por compra directa.';
+}
+
 // fractional accumulators so we can tick every 100ms but still give correct per-second rates
 let coinAccum=0, dnaAccum=0;
 let lastFloatCoin=0, lastFloatDna=0;
@@ -2026,7 +2092,7 @@ function spawnFloat(amount,icon,color,anchorEl){
 function addDinoToIncome(name,emoji,rarity){
   // Only add if not already in FARM_DINOS
   if(!FARM_DINOS.find(d=>d.name===name)){
-    FARM_DINOS.push({name,emoji,rarity,hp:100,happy:100,dna:0});
+    FARM_DINOS.push({name,emoji,rarity,hp:100,happy:100,dna:0,owned_since:Date.now()});
   }
   buildIncomeBar();
   renderFarm();
@@ -2821,27 +2887,27 @@ const DINOS=[
   {id:21,name:'Shadow Raptor',emoji:'🖤',species:'Velociraptor umbra',rarity:'Secret',dnaRate:95,coinCost:0,dnaUnlock:0,
    desc:'A pitch-black raptor that only appears at midnight. Grants a 2x coin multiplier to your entire farm.',
    stats:{speed:10,strength:10,breed:8,happy:7},owned:true,
-   secret:true,unlocked:true,hint:'🌙 ???',
+   secret:true,unlocked:false,hint:'🌙 ???',
    unlockCondition:'Visit your farm 3 times in one session',unlockKey:'farm_visits_3'},
   {id:22,name:'Crystalwing',emoji:'🦋',species:'Pterosaur crystallus',rarity:'Secret',dnaRate:88,coinCost:0,dnaUnlock:0,
    desc:'A pterosaur with wings made of crystallized amber. Generates DNA even when offline.',
    stats:{speed:10,strength:6,breed:9,happy:10},owned:true,
-   secret:true,unlocked:true,hint:'🔮 ???',
+   secret:true,unlocked:false,hint:'🔮 ???',
    unlockCondition:'Convert DNA into coins 5 times',unlockKey:'dna_converts_5'},
   {id:23,name:'Ghostosaurus',emoji:'👻',species:'Phantomsaurus spectrus',rarity:'Secret',dnaRate:100,coinCost:0,dnaUnlock:0,
    desc:'A translucent dinosaur that phases through walls. Doubles DNA generation for all Mythic dinos.',
    stats:{speed:9,strength:8,breed:10,happy:9},owned:true,
-   secret:true,unlocked:true,hint:'👁 ???',
+   secret:true,unlocked:false,hint:'👁 ???',
    unlockCondition:'Hatch 3 eggs from the Hatchery',unlockKey:'eggs_hatched_3'},
   {id:24,name:'Nebula Rex',emoji:'🌌',species:'Tyrannosaurus cosmicus',rarity:'Secret',dnaRate:120,coinCost:0,dnaUnlock:0,
    desc:'A T-Rex from another dimension covered in stars. The single most powerful DNA earner in existence.',
    stats:{speed:8,strength:10,breed:7,happy:8},owned:true,
-   secret:true,unlocked:true,hint:'🌠 ???',
+   secret:true,unlocked:false,hint:'🌠 ???',
    unlockCondition:'Have 10 or more dinos on your farm at once',unlockKey:'farm_size_10'},
   {id:31,name:'DomingDino',emoji:'🔥',species:'Dominicus ignius rex',rarity:'Secret',dnaRate:115,coinCost:0,dnaUnlock:0,
    desc:'A fire-breathing legend. DomingDino set the entire Mystic Crater ablaze. Nobody has ever tamed one — until now.',
    stats:{speed:9,strength:10,breed:9,happy:8},owned:true,
-   secret:true,unlocked:true,hint:'🔥 ???',
+   secret:true,unlocked:false,hint:'🔥 ???',
    unlockCondition:'Sell 3 dinosaurs in the Market',unlockKey:'market_sells_3'},
   // ── OG ORIGINALS ──
   {id:25,name:'DinoCleme',emoji:'🦖',species:'Rex clementius primus',rarity:'OG',dnaRate:250,coinCost:0,dnaUnlock:100000,
@@ -2955,16 +3021,69 @@ function secretCard(d){
 }
 function dinoCard(d,rc){
   const locked=!d.owned;
-  const costLabel=d.coinCost>0?`🪙 ${d.coinCost.toLocaleString()}`:`🧬 ${d.dnaUnlock}`;
-  const costColor=d.coinCost>0?'var(--amber)':'var(--dna-light)';
-  const btnTxt=d.owned?'On Farm ✓':(d.coinCost>0?'Capture':'Unlock');
-  const btnDis=d.owned?'style="opacity:.6;cursor:default"':'';
+  // V2: precios y labels según PRICES_V2 / ACQUISITION_V2
+  let costLabel, costColor, btnTxt, btnDis;
+  if(d.owned){
+    costLabel = '✓ En granja';
+    costColor = 'var(--green-light)';
+    btnTxt = 'On Farm ✓';
+    btnDis = 'style="opacity:.6;cursor:default"';
+  } else if(ECONOMY_V2){
+    const source = ACQUISITION_V2[d.rarity];
+    if(source === 'direct'){
+      const p = PRICES_V2[d.rarity];
+      const coinTxt = '🪙 '+p.coin.toLocaleString();
+      const dnaTxt = p.dna>0 ? ' + 🧬 '+p.dna.toLocaleString() : '';
+      costLabel = coinTxt + dnaTxt;
+      costColor = 'var(--amber)';
+      btnTxt = 'Capture';
+    } else if(source === 'breeding'){
+      costLabel = '🧬 Breeding only';
+      costColor = 'var(--mythic)';
+      btnTxt = 'Breed';
+    } else if(source === 'challenge'){
+      costLabel = '🔒 Challenge';
+      costColor = '#e0e0ff';
+      btnTxt = 'Locked';
+    } else if(source === 'event'){
+      costLabel = '👑 Jurassic Event';
+      costColor = '#ffd700';
+      btnTxt = 'Event';
+    }
+    btnDis = '';
+  } else {
+    // Legacy path
+    costLabel = d.coinCost>0 ? '🪙 '+d.coinCost.toLocaleString() : '🧬 '+d.dnaUnlock;
+    costColor = d.coinCost>0 ? 'var(--amber)' : 'var(--dna-light)';
+    btnTxt = d.coinCost>0 ? 'Capture' : 'Unlock';
+    btnDis = '';
+  }
   return `<div class="dc rc ${rc}${locked?' locked':''}" onclick="openCatModal(${d.id})"><div class="dc-strip"></div><div class="dc-top"><span class="dc-emoji">${d.emoji}</span><div class="dc-name">${d.name}</div><div class="dc-species">${d.species.toUpperCase()}</div><div class="dc-rarity">✦ ${d.rarity}</div><div class="dc-rewards"><div class="reward-chip" style="color:var(--dna-light)">🧬 +${d.dnaRate}/hr</div><div class="reward-chip" style="color:var(--amber)">🪙 +${d.dnaRate*5}/hr</div></div></div><div class="dc-stats"><div class="mb-row"><div class="mb-lbl">Speed</div><div class="mb-track"><div class="mb-fill" style="width:${d.stats.speed*10}%;background:var(--blue)"></div></div><div class="mb-val">${d.stats.speed}</div></div><div class="mb-row"><div class="mb-lbl">Power</div><div class="mb-track"><div class="mb-fill" style="width:${d.stats.strength*10}%;background:var(--red)"></div></div><div class="mb-val">${d.stats.strength}</div></div><div class="mb-row"><div class="mb-lbl">Breed</div><div class="mb-track"><div class="mb-fill" style="width:${d.stats.breed*10}%;background:var(--green-light)"></div></div><div class="mb-val">${d.stats.breed}</div></div></div><div class="dc-cta"><div class="dc-cost" style="color:${costColor}">${costLabel}</div><button class="dc-btn" ${btnDis} onclick="event.stopPropagation();handleCatCapture(${d.id})">${btnTxt}</button></div>${locked?`<div class="lock-ov"><div class="lock-chip">🔒 ${costLabel}</div></div>`:''}</div>`;
 }
 function catFilter(f,btn){catFilterVal=f;document.querySelectorAll('.cat-filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');buildCatalog()}
 function catSearch(v){catSearchVal=v.toLowerCase();buildCatalog()}
 function handleCatCapture(id){
   const d=DINOS.find(x=>x.id===id);if(!d||d.owned)return;
+  if(ECONOMY_V2){
+    const check = canBuyDino(d);
+    if(!check.ok){
+      if(check.reason === 'prereq'){ toast('🔒 '+check.msg); return; }
+      toast(blockedAcquisitionMsg(check.reason, d.rarity)); return;
+    }
+    const p = PRICES_V2[d.rarity];
+    if(coinsVal < p.coin){ toast('🪙 Necesitás '+p.coin.toLocaleString()+' coins.'); return; }
+    if(p.dna > 0 && dnaVal < p.dna){ toast('🧬 Necesitás '+p.dna.toLocaleString()+' DNA.'); return; }
+    coinsVal -= p.coin;
+    if(p.dna > 0) dnaVal -= p.dna;
+    dnaVal += 20; // bonus por captura (se mantiene)
+    d.owned = true; dinoCountVal++;
+    updateStats(); bump('s-dino'); bump('s-coin'); bump('s-dna');
+    addDinoToIncome(d.name, d.emoji, d.rarity);
+    toast(d.emoji+' '+d.name+' rescued! +20 🧬 · +'+INCOME_TABLE[d.rarity].coins+' coins/s!','rgba(76,175,96,0.5)');
+    buildCatalog();
+    return;
+  }
+  // Legacy path (ECONOMY_V2=false)
   if(d.coinCost>0){
     if(coinsVal>=d.coinCost){coinsVal-=d.coinCost;dnaVal+=20;d.owned=true;dinoCountVal++;updateStats();bump('s-dino');bump('s-coin');bump('s-dna');addDinoToIncome(d.name,d.emoji,d.rarity);toast(d.emoji+' '+d.name+' rescued! +20 🧬 · now earning +'+INCOME_TABLE[d.rarity].coins+' coins/s!','rgba(76,175,96,0.5)');buildCatalog()}
     else toast('🪙 Need '+d.coinCost.toLocaleString()+' coins — convert DNA to earn more!');
@@ -2976,12 +3095,15 @@ function handleCatCapture(id){
 function ogCard(d){
   const c=d.ogColor||'#ffd700';
   const owned=d.owned;
-  const costLabel=d.coinCost>0
-    ? '🪙 '+d.coinCost.toLocaleString()+' coins to unlock'
-    : '🧬 '+(d.dnaUnlock||100000).toLocaleString()+' DNA to unlock';
+  const costLabel = ECONOMY_V2
+    ? '👑 Jurassic Event (mensual)'
+    : (d.coinCost>0
+        ? '🪙 '+d.coinCost.toLocaleString()+' coins to unlock'
+        : '🧬 '+(d.dnaUnlock||100000).toLocaleString()+' DNA to unlock');
+  const btnLabel = ECONOMY_V2 ? 'Event Only' : 'Claim OG';
   const ctaHtml=owned
     ?`<div class="dc-cost" style="color:${c}">✅ In your farm!</div><button class="dc-btn og-btn" style="--og-color:${c}" onclick="event.stopPropagation();goToFarm()">View Farm</button>`
-    :`<div style="font-size:10px;color:${c}88;font-weight:800">${costLabel}</div><button class="dc-btn og-btn" style="--og-color:${c}" onclick="event.stopPropagation();tryClaimOG(${d.id})">Claim OG</button>`;
+    :`<div style="font-size:10px;color:${c}88;font-weight:800">${costLabel}</div><button class="dc-btn og-btn" style="--og-color:${c}" onclick="event.stopPropagation();tryClaimOG(${d.id})">${btnLabel}</button>`;
   return `<div class="dc og-card${owned?' og-owned':''}" onclick="openCatModal(${d.id})" style="--og-color:${c}">
     <div class="og-stripe"></div>
     <div class="og-number">${d.ogNumber}</div>
@@ -3012,6 +3134,10 @@ function goToFarm(){
 function tryClaimOG(id){
   const d=DINOS.find(x=>x.id===id);
   if(!d||!d.og)return;
+  if(ECONOMY_V2){
+    toast(blockedAcquisitionMsg('event','OG'));
+    return;
+  }
   if(d.coinCost>0){
     if(coinsVal>=d.coinCost){
       coinsVal-=d.coinCost; d.owned=true; dinoCountVal++;
@@ -4510,6 +4636,14 @@ function scheduleSave(){
 
 async function loadGameState(userId){
   if(!supabaseClient || !userId) return;
+  // V2 fix: antes de cualquier data, limpiar estado hardcoded de DINOS[]
+  // (secrets hardcoded con unlocked:true, owned:true en varios)
+  if(typeof DINOS !== 'undefined'){
+    DINOS.forEach(d => {
+      if(d.secret) d.unlocked = false;
+      d.owned = false;
+    });
+  }
   const {data, error} = await supabaseClient.from('game_saves')
     .select('*').eq('user_id', userId).maybeSingle();
   if(error){ console.warn('Load error:', error); return; }
@@ -4519,13 +4653,18 @@ async function loadGameState(userId){
     try{ updateStats(); }catch(e){}
     try{ renderFarm(); }catch(e){}
     try{ buildIncomeBar(); }catch(e){}
+    try{ buildCatalog(); }catch(e){}
     return;
   }
   coinsVal = Number(data.coins) || 0;
   dnaVal   = Number(data.dna)   || 0;
   const fd = Array.isArray(data.farm_dinos) ? data.farm_dinos : [];
   FARM_DINOS.length = 0;
-  fd.forEach(d => FARM_DINOS.push(d));
+  // Migration V2: backfill owned_since si no existe (para prereqs de rarity)
+  fd.forEach(d => {
+    if(d && typeof d.owned_since === 'undefined') d.owned_since = Date.now();
+    FARM_DINOS.push(d);
+  });
   dinoCountVal = FARM_DINOS.length;
   const ei = Array.isArray(data.egg_inventory) ? data.egg_inventory : [];
   eggInventory.length = 0;
@@ -4544,12 +4683,16 @@ async function loadGameState(userId){
   }
   const secrets = Array.isArray(data.unlocked_secrets) ? data.unlocked_secrets : [];
   if(typeof DINOS!=='undefined'){
+    // V2 fix: reset unlocked=false para todos los secrets antes de aplicar el save
+    // (el DINOS[] tiene unlocked:true hardcodeado que hace que todos parezcan descubiertos)
+    DINOS.forEach(d => { if(d.secret) d.unlocked = false; });
     secrets.forEach(id => { const d=DINOS.find(x=>x.id===id); if(d) d.unlocked=true; });
     DINOS.forEach(d => { d.owned = FARM_DINOS.some(f => f.name === d.name); });
   }
   try{ updateStats(); }catch(e){}
   try{ renderFarm(); }catch(e){}
   try{ buildIncomeBar(); }catch(e){}
+  try{ buildCatalog(); }catch(e){}
   console.log('✅ Loaded save — coins:', coinsVal, 'dna:', dnaVal, 'dinos:', FARM_DINOS.length);
 }
 
