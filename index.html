@@ -1639,11 +1639,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
           <div style="font-size:48px;margin-bottom:8px">🥚</div>
           <div style="font-family:'Fredoka One',cursive;font-size:20px;color:#aaff44;margin-bottom:4px">Easter Mystery Egg</div>
           <div style="font-size:12px;color:#668833;margin-bottom:12px;line-height:1.6">
+            <span style="color:#00ff88;font-weight:800">0.1%</span> Hacker Bunny 🥷 &nbsp;|&nbsp;
             <span style="color:#ff69b4;font-weight:800">1%</span> Easter Bunny 🐰 &nbsp;|&nbsp;
             <span style="color:#ff4444;font-weight:800">4%</span> Easter Rex 🦖 &nbsp;|&nbsp;
             <span style="color:#aaffaa;font-weight:800">33%</span> Easter Dog 🐶 &nbsp;|&nbsp;
             <span style="color:#aaaaff;font-weight:800">10%</span> Easter Cat 🐱 &nbsp;|&nbsp;
-            <span style="color:#ffff88;font-weight:800">52%</span> Coins + DNA 🪙
+            <span style="color:#ffff88;font-weight:800">51.9%</span> Coins + DNA 🪙
           </div>
           <div style="font-family:'Fredoka One',cursive;font-size:22px;color:#ff69b4;margin-bottom:12px">🥚 800 Easter Coins</div>
           <button onclick="buyEasterEgg()" style="background:linear-gradient(135deg,#aaff44,#66cc00);color:#001a00;border:none;border-radius:30px;padding:12px 32px;font-family:'Nunito',sans-serif;font-weight:900;font-size:15px;cursor:pointer">🥚 Hatch Easter Egg</button>
@@ -5301,11 +5302,12 @@ let easterSelectedDino=null;
 const EASTER_FIGHT_INTERVAL=10*60*1000;
 
 const EASTER_DROPS=[
-  {name:'Easter Bunny',emoji:'🐰',rarity:'Secret', chance:1,  color:'#ff69b4',desc:'🌟 THE RAREST DROP IN DINOSAVE! Only 1% chance!! LEGENDARY SECRET DINO!'},
+  {name:'Hacker Bunny',emoji:'🥷',rarity:'Ultra Secret',chance:0.1,color:'#00ff88',desc:'💻 THE RAREST DROP EVER!! Only 0.1% chance!! HACKER BUNNY — 1-in-1000 ULTRA SECRET!'},
+  {name:'Easter Bunny',emoji:'🐰',rarity:'Secret', chance:1,  color:'#ff69b4',desc:'🌟 SUPER RARE! 1% chance! LEGENDARY SECRET DINO!'},
   {name:'Easter Rex',  emoji:'🦖',rarity:'Mythic',  chance:4,  color:'#ff4444',desc:'🔥 Easter Rex — A Mythic dino! (4% chance) Insane power!'},
   {name:'Easter Dog',  emoji:'🐶',rarity:'Rare',   chance:33, color:'#aaffaa',desc:'A cute Easter Dog hops onto your farm! (33% chance)'},
   {name:'Easter Cat',  emoji:'🐱',rarity:'Uncommon',chance:10,color:'#aaaaff',desc:'A fluffy Easter Cat joins your farm! (10% chance)'},
-  {name:'Coin Reward', emoji:'🪙',rarity:'Common', chance:52, color:'#ffd700',desc:'+5,000 coins & +2,000 DNA'},
+  {name:'Coin Reward', emoji:'🪙',rarity:'Common', chance:51.9,color:'#ffd700',desc:'+5,000 coins & +2,000 DNA'},
 ];
 
 function initEasterArena(){
@@ -5548,6 +5550,22 @@ function buyEasterEgg(){
     // Easter Bunny is secret — special celebration
     if(drop.name==='Easter Rex'){
       toast('🦖 MYTHIC EASTER REX HATCHED! 4% chance! INCREDIBLE!','rgba(255,68,68,.8)');
+    } else if(drop.name==='Hacker Bunny'){
+      triggerGlobalCelebration('🥷 SOMEONE JUST HATCHED THE HACKER BUNNY!! 0.1% chance — 1 IN 1000!! THE RAREST DROP IN DINOSAVE!! 💻👑🎉');
+      setTimeout(()=>{
+        const el=document.createElement('div');
+        el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:900;display:flex;align-items:center;justify-content:center;padding:20px';
+        el.innerHTML=`<div style="background:linear-gradient(135deg,#001a0a,#002a14);border:3px solid #00ff88;border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 0 80px rgba(0,255,136,.6)">
+          <div style="font-size:16px;font-weight:800;color:#00ff88;text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px">💻 ULTRA SECRET 0.1% DROP! 💻</div>
+          <div style="font-size:90px;margin-bottom:12px;animation:dinoEmojiBounce .4s ease infinite alternate">🥷</div>
+          <div style="font-family:'Fredoka One',cursive;font-size:32px;color:#00ff88;margin-bottom:8px">HACKER BUNNY!</div>
+          <div style="font-size:13px;color:#44cc88;margin-bottom:20px;line-height:1.6">You just hatched the RAREST dino in DinoSave!<br><strong style="color:#00ff88">Only 0.1% chance — 1 in 1000!</strong> You are ULTRA LEGENDARY! 👑</div>
+          <div style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);border-radius:14px;padding:12px;margin-bottom:20px;font-size:12px;color:#00ff88;font-weight:800">💻 ULTRA SECRET DINO UNLOCKED<br>Added to your farm forever!</div>
+          <button onclick="this.parentElement.parentElement.remove()" style="width:100%;padding:14px;border:none;border-radius:30px;background:linear-gradient(135deg,#00ff88,#00cc66);color:#001a0a;font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;cursor:pointer">🥷 Unbelievable! Let's Go!</button>
+        </div>`;
+        document.body.appendChild(el);
+      },500);
+      toast('🥷 0.1% CHANCE!! YOU HATCHED THE HACKER BUNNY!! 1-IN-1000 LUCK!!','rgba(0,255,136,.9)');
     } else if(drop.name==='Easter Bunny'){
       triggerGlobalCelebration('🐰 SOMEONE JUST HATCHED THE EASTER BUNNY!! 1% chance — THE RAREST DROP IN DINOSAVE!! 🥚👑🎉');
       // Big special popup
