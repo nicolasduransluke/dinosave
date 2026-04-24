@@ -3017,7 +3017,7 @@ function secretCard(d){
       <div style="font-size:10px;color:#5a5a8a;margin-top:8px;font-style:italic">${d.hint}</div>
     </div>
     <div style="padding:0 14px 12px;font-size:11px;color:#4a4a6a;line-height:1.5;font-style:italic">A hidden dinosaur. Complete a secret action to reveal it.</div>
-    <div class="dc-cta" style="border-color:#2a2a4a"><div class="dc-cost" style="color:#5a5a8a">🔍 Hint</div><button class="dc-btn" style="background:#2a2a5a;color:#8888cc" onclick="event.stopPropagation();openSecretHint(${d.id})">See Hint</button></div>
+    <div class="dc-cta" style="border-color:#2a2a4a"><div class="dc-cost" style="color:#5a5a8a">💰 $50k–70k</div><button class="dc-btn" style="background:#2a2a5a;color:#8888cc" onclick="event.stopPropagation();openSecretHint(${d.id})">Buy Hint</button></div>
   </div>`;
 }
 function dinoCard(d,rc){
@@ -4008,9 +4008,38 @@ function showSecretUnlockToast(d){
   setTimeout(()=>t.remove(),5000);
 }
 
+let hintPaid = new Set();
+let hintPrices = {};
+try {
+  hintPaid = new Set(JSON.parse(localStorage.getItem('dinosaave_hint_paid')||'[]'));
+  hintPrices = JSON.parse(localStorage.getItem('dinosaave_hint_prices')||'{}');
+} catch(e){}
+function saveHintState(){
+  try {
+    localStorage.setItem('dinosaave_hint_paid', JSON.stringify([...hintPaid]));
+    localStorage.setItem('dinosaave_hint_prices', JSON.stringify(hintPrices));
+  } catch(e){}
+}
+
 function openSecretHint(id){
   const d=DINOS.find(x=>x.id===id);
   if(!d||!d.secret)return;
+  // Gate behind one-time payment: 50,000-70,000 coins per secret.
+  // Free once the secret has been discovered in-game, or the hint was already bought.
+  if(!d.unlocked && !hintPaid.has(id)){
+    if(!hintPrices[id]) hintPrices[id] = 50000 + Math.floor(Math.random()*20001);
+    const price = hintPrices[id];
+    if(coinsVal < price){
+      toast('🔒 Need $'+price.toLocaleString()+' coins to buy this hint! You have $'+Math.floor(coinsVal).toLocaleString(),'rgba(255,100,0,.6)');
+      return;
+    }
+    if(!confirm('🔍 Buy hint for this Secret Dino?\n\n💰 Cost: $'+price.toLocaleString()+' coins\n\nYou only pay once — the hint stays unlocked forever.')) return;
+    coinsVal -= price;
+    updateStats(); bump('s-coin');
+    hintPaid.add(id);
+    saveHintState();
+    toast('🔍 Hint unlocked! -$'+price.toLocaleString()+' coins','rgba(192,132,252,.5)');
+  }
   const prog=secretProgress[d.unlockKey];
   const count=prog?prog.count:0;
   const needed=prog?prog.needed:1;
