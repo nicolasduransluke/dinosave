@@ -421,6 +421,75 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .egg-inv-rarity{font-size:9px;font-weight:800}
 .egg-inv-qty{position:absolute;top:6px;right:8px;background:var(--amber);color:#1a1000;font-size:10px;font-weight:900;border-radius:20px;padding:1px 7px}
 
+/* GARDEN */
+.garden-hero{background:linear-gradient(135deg,#0d1f12,#0a1a18);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:22px;margin-bottom:22px;position:relative;overflow:hidden}
+.garden-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 90% 50%,rgba(109,186,126,.14) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 5% 30%,rgba(192,132,252,.08) 0%,transparent 55%);pointer-events:none}
+.garden-hero-deco{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:40px;letter-spacing:-4px;opacity:.14;pointer-events:none;user-select:none}
+.garden-hero-eyebrow{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--green-light);text-transform:uppercase;margin-bottom:5px}
+.garden-hero-title{font-family:'Fredoka One',cursive;font-size:28px;line-height:1.05;margin-bottom:7px}
+.garden-hero-title span{color:var(--green-light)}
+.garden-hero-desc{font-size:13px;color:var(--text2);max-width:520px;line-height:1.65;margin-bottom:14px}
+.garden-hero-pills{display:flex;gap:8px;flex-wrap:wrap}
+.garden-pill{display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border2);border-radius:30px;padding:4px 12px;font-size:12px;font-weight:700;color:var(--text2)}
+
+/* PLOTS */
+.plot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-bottom:8px}
+.plot{background:var(--card);border:2px solid var(--border);border-radius:var(--radius-lg);padding:14px;text-align:center;transition:all .2s;position:relative;overflow:hidden;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;user-select:none}
+.plot.empty{border-style:dashed;border-color:var(--text3)}
+.plot.empty:hover{border-color:var(--green-light);background:rgba(109,186,126,.04)}
+.plot.growing:hover{transform:translateY(-2px);border-color:rgba(109,186,126,.5)}
+.plot.ready{border-color:var(--green-light);animation:readyPulse .8s ease-in-out infinite}
+.plot.ready:hover{transform:translateY(-2px)}
+.plot-num{position:absolute;top:6px;left:8px;font-size:9px;font-weight:800;color:var(--text3)}
+.plot-emoji{font-size:48px;line-height:1;margin:6px 0;transition:transform .12s}
+.plot.hit-flash .plot-emoji{transform:scale(1.3) rotate(-12deg)}
+.plot-name{font-weight:800;font-size:13px}
+.plot-rarity{font-size:9px;font-weight:800;letter-spacing:.04em}
+.plot-time{font-size:11px;color:var(--text2);font-weight:700}
+.plot-bar-wrap{width:100%;background:var(--bg2);border-radius:10px;overflow:hidden;height:6px;margin-top:4px}
+.plot-bar-fill{height:100%;border-radius:10px;transition:width .3s}
+.plot-action{margin-top:6px;border:none;border-radius:30px;padding:7px 14px;font-weight:900;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif}
+.plot-mut-badge{position:absolute;top:6px;right:8px;font-size:10px;font-weight:900;border-radius:20px;padding:2px 8px;animation:mutPulse 1.6s ease-in-out infinite}
+@keyframes mutPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+/* SEED INVENTORY */
+.seed-inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.seed-inv-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;position:relative}
+.seed-inv-emoji{font-size:34px;display:block;margin-bottom:4px}
+.seed-inv-name{font-weight:800;font-size:12px;margin-bottom:3px}
+.seed-inv-rarity{font-size:9px;font-weight:800}
+.seed-inv-qty{position:absolute;top:6px;right:8px;background:var(--green-light);color:#0d1f12;font-size:10px;font-weight:900;border-radius:20px;padding:1px 7px}
+
+/* SEED SHOP */
+.seed-shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.seed-shop-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;text-align:center;position:relative;overflow:hidden;transition:all .2s}
+.seed-shop-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.seed-shop-card.sold-out{opacity:.5}
+.seed-shop-emoji{font-size:36px;display:block;margin-bottom:6px}
+.seed-shop-name{font-weight:800;font-size:14px;margin-bottom:3px}
+.seed-shop-rarity{font-size:10px;font-weight:800;margin-bottom:4px}
+.seed-shop-meta{font-size:10px;color:var(--text2);margin-bottom:8px}
+.seed-shop-stock{position:absolute;top:6px;right:8px;background:var(--bg2);border:1px solid var(--border2);font-size:10px;font-weight:900;border-radius:20px;padding:1px 7px;color:var(--text)}
+.seed-shop-price{font-size:14px;font-weight:800;color:var(--amber);margin-bottom:8px}
+.seed-buy-btn{width:100%;border:none;border-radius:30px;padding:8px;font-weight:900;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif}
+.seed-buy-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* HARVEST INVENTORY */
+.harvest-inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.harvest-inv-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;position:relative}
+.harvest-inv-emoji{font-size:34px;display:block;margin-bottom:4px}
+.harvest-inv-name{font-weight:800;font-size:12px;margin-bottom:3px}
+.harvest-inv-mut{font-size:10px;font-weight:900;margin-bottom:6px}
+.harvest-inv-price{font-size:11px;color:var(--amber);font-weight:800;margin-bottom:6px}
+.harvest-sell-btn{width:100%;border:none;border-radius:30px;padding:6px;font-weight:900;font-size:11px;cursor:pointer;background:var(--amber);color:#1a1000;font-family:'Nunito',sans-serif}
+.harvest-inv-qty{position:absolute;top:6px;right:8px;background:var(--green-light);color:#0d1f12;font-size:10px;font-weight:900;border-radius:20px;padding:1px 7px}
+
+/* SEED PICKER MODAL CARD */
+.seed-picker-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px;cursor:pointer;text-align:center;transition:all .15s;position:relative}
+.seed-picker-card:hover{border-color:var(--green-light);transform:translateY(-2px)}
+.seed-picker-card.disabled{opacity:.4;cursor:not-allowed}
+.seed-picker-card.disabled:hover{transform:none;border-color:var(--border)}
+
 /* FRIENDS SOCIAL HUB */
 .soc-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border)}
 .soc-tab{padding:10px 18px;border:none;background:transparent;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:4px}
@@ -691,6 +760,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <button class="nav-btn active" onclick="nav('farm',this)">🌿<span>Farm</span></button>
     <button class="nav-btn" onclick="nav('capture',this)">🎯<span>Catch</span><div class="nav-badge" id="catch-badge">3</div></button>
     <button class="nav-btn" onclick="nav('eggs',this)">🥚<span>Eggs</span></button>
+    <button class="nav-btn" onclick="nav('garden',this)">🌱<span>Garden</span></button>
     <button class="nav-btn" onclick="nav('dna',this)">🧬<span>DNA</span></button>
     <button class="nav-btn" onclick="nav('catalog',this)">📖<span>All</span></button>
     <button class="nav-btn" onclick="nav('market',this)">🏪<span>Market</span></button>
@@ -1855,6 +1925,56 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
     </div>
 
+    <!-- GARDEN -->
+    <div class="panel" id="panel-garden">
+
+      <!-- HERO -->
+      <div class="garden-hero">
+        <div class="garden-hero-deco">🌱🌿🌻🌹🍓🥕</div>
+        <div class="garden-hero-eyebrow">🌱 Garden</div>
+        <div class="garden-hero-title">Plant. Grow. <span>Harvest.</span></div>
+        <div class="garden-hero-desc">Buy seeds when the shop restocks, plant them in your plots, hit them while they grow for a chance at mutations, then harvest and sell for coins!</div>
+        <div class="garden-hero-pills">
+          <div class="garden-pill">⏱ Common: 5 min</div>
+          <div class="garden-pill">⏱ Rare: 1 h</div>
+          <div class="garden-pill" style="color:var(--legendary)">⏱ Legendary: 6 h</div>
+          <div class="garden-pill" style="color:#c084fc">✨ Mutations boost sell price up to 25×</div>
+        </div>
+      </div>
+
+      <!-- GARDEN PLOTS -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Fredoka One',cursive;font-size:18px">🪴 Your Plots <span style="font-size:13px;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:700">(tap empty plot to plant • tap growing plant to hit it)</span></div>
+      </div>
+      <div class="plot-grid" id="plot-grid"></div>
+
+      <!-- SEED INVENTORY -->
+      <div style="font-family:'Fredoka One',cursive;font-size:18px;margin:24px 0 12px">🌰 Seed Inventory <span id="seed-inv-count" style="font-size:13px;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:700"></span></div>
+      <div class="seed-inv-grid" id="seed-inv-grid"></div>
+
+      <!-- SEED SHOP -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Fredoka One',cursive;font-size:18px">🛒 Seed Shop</div>
+        <div style="font-size:12px;color:var(--text2);font-weight:700">🔄 Next restock in <span id="seed-shop-countdown" style="color:var(--green-light);font-weight:900">--:--</span></div>
+      </div>
+      <div class="seed-shop-grid" id="seed-shop-grid"></div>
+
+      <!-- HARVEST INVENTORY -->
+      <div style="font-family:'Fredoka One',cursive;font-size:18px;margin:24px 0 12px">🧺 Harvest <span id="harvest-inv-count" style="font-size:13px;color:var(--text2);font-family:'Nunito',sans-serif;font-weight:700"></span></div>
+      <div class="harvest-inv-grid" id="harvest-inv-grid"></div>
+
+    </div>
+
+    <!-- SEED PICKER MODAL -->
+    <div class="modal-bg" id="seed-picker-bg" style="display:none" onclick="closeSeedPicker(event)">
+      <div class="modal-farm" style="max-width:520px">
+        <button class="modal-close" onclick="closeSeedPicker()">✕</button>
+        <h2 style="font-family:'Fredoka One',cursive;font-size:22px;margin-bottom:6px">🌰 Pick a seed</h2>
+        <p style="color:var(--text2);font-size:12px;margin-bottom:14px">Choose which seed to plant in plot <span id="seed-picker-plot"></span>.</p>
+        <div id="seed-picker-list" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:400px;overflow-y:auto"></div>
+      </div>
+    </div>
+
   </div><!-- /main -->
 </div><!-- /layout -->
 
@@ -2173,6 +2293,7 @@ function nav(id,btn){
   if(id==='world')      setTimeout(()=>initWorld(),60);
   if(id==='market'){    if(!Object.keys(marketPrices).length) refreshMarket(); startMarketTimer(); }
   if(id==='eggs')       initEggs();
+  if(id==='garden')     initGarden();
   if(id==='farm')       renderFarm();
   if(id==='friends')    initFriends();
   if(id==='tournament') initTournament();
@@ -3522,6 +3643,77 @@ function startMarketTimer(){
 }
 
 // ══════════════════════════════
+// GARDEN — Plants, Mutations, Seed Shop
+// ══════════════════════════════
+const PLANTS=[
+  // 🟢 Common — 5 min, 50 → 100
+  {id:'carrot',     emoji:'🥕', name:'Carrot',       rarity:'Common',    growSec:300,    seedCost:50,      sellPrice:100},
+  {id:'strawberry', emoji:'🍓', name:'Strawberry',   rarity:'Common',    growSec:300,    seedCost:50,      sellPrice:100},
+  {id:'corn',       emoji:'🌽', name:'Corn',         rarity:'Common',    growSec:300,    seedCost:50,      sellPrice:100},
+  {id:'lettuce',    emoji:'🥬', name:'Lettuce',      rarity:'Common',    growSec:300,    seedCost:50,      sellPrice:100},
+  // 🔵 Uncommon — 15 min, 200 → 350
+  {id:'blueberry',  emoji:'🫐', name:'Blueberry',    rarity:'Uncommon',  growSec:900,    seedCost:200,     sellPrice:350},
+  {id:'tomato',     emoji:'🍅', name:'Tomato',       rarity:'Uncommon',  growSec:900,    seedCost:200,     sellPrice:350},
+  {id:'chili',      emoji:'🌶️', name:'Chili Pepper', rarity:'Uncommon',  growSec:900,    seedCost:200,     sellPrice:350},
+  {id:'grape',      emoji:'🍇', name:'Grape',        rarity:'Uncommon',  growSec:900,    seedCost:200,     sellPrice:350},
+  // 🟣 Rare — 1 h, 800 → 1500
+  {id:'watermelon', emoji:'🍉', name:'Watermelon',   rarity:'Rare',      growSec:3600,   seedCost:800,     sellPrice:1500},
+  {id:'peach',      emoji:'🍑', name:'Peach',        rarity:'Rare',      growSec:3600,   seedCost:800,     sellPrice:1500},
+  {id:'coconut',    emoji:'🥥', name:'Coconut',      rarity:'Rare',      growSec:3600,   seedCost:800,     sellPrice:1500},
+  {id:'pineapple',  emoji:'🍍', name:'Pineapple',    rarity:'Rare',      growSec:3600,   seedCost:800,     sellPrice:1500},
+  // 🟠 Epic — 3 h, 3000 → 6500
+  {id:'mango',      emoji:'🥭', name:'Mango',        rarity:'Epic',      growSec:10800,  seedCost:3000,    sellPrice:6500},
+  {id:'dragonfruit',emoji:'🐉', name:'Dragon Fruit', rarity:'Epic',      growSec:10800,  seedCost:3000,    sellPrice:6500},
+  {id:'starfruit',  emoji:'⭐', name:'Starfruit',    rarity:'Epic',      growSec:10800,  seedCost:3000,    sellPrice:6500},
+  {id:'cherrybomb', emoji:'🍒', name:'Cherry Bomb',  rarity:'Epic',      growSec:10800,  seedCost:3000,    sellPrice:6500},
+  // ⭐ Legendary — 6 h, 12k → 30k
+  {id:'sunpetal',   emoji:'🌻', name:'Sunpetal',     rarity:'Legendary', growSec:21600,  seedCost:12000,   sellPrice:30000},
+  {id:'honeylotus', emoji:'🪷', name:'Honey Lotus',  rarity:'Legendary', growSec:21600,  seedCost:12000,   sellPrice:30000},
+  {id:'moonberry',  emoji:'🌙', name:'Moonberry',    rarity:'Legendary', growSec:21600,  seedCost:12000,   sellPrice:30000},
+  {id:'crystalrose',emoji:'🌹', name:'Crystal Rose', rarity:'Legendary', growSec:21600,  seedCost:12000,   sellPrice:30000},
+  // 💎 Mythic — 12 h, 50k → 150k
+  {id:'mythorchid', emoji:'🔮', name:'Mythic Orchid',rarity:'Mythic',    growSec:43200,  seedCost:50000,   sellPrice:150000},
+  {id:'cometfruit', emoji:'☄️', name:'Cometfruit',   rarity:'Mythic',    growSec:43200,  seedCost:50000,   sellPrice:150000},
+  {id:'eyeplant',   emoji:'👁️', name:'Eye Plant',    rarity:'Mythic',    growSec:43200,  seedCost:50000,   sellPrice:150000},
+  {id:'thunderlily',emoji:'⚡', name:'Thunder Lily', rarity:'Mythic',    growSec:43200,  seedCost:50000,   sellPrice:150000},
+  // ✨ Secret — 24 h, 200k → 700k
+  {id:'galaxybloom',emoji:'🌌', name:'Galaxy Bloom', rarity:'Secret',    growSec:86400,  seedCost:200000,  sellPrice:700000},
+  {id:'dinofern',   emoji:'🦴', name:'Dino Fern',    rarity:'Secret',    growSec:86400,  seedCost:200000,  sellPrice:700000},
+  {id:'rexroot',    emoji:'🦖', name:'RexRoot',      rarity:'Secret',    growSec:86400,  seedCost:200000,  sellPrice:700000},
+  {id:'timevine',   emoji:'🕰️', name:'Time Vine',    rarity:'Secret',    growSec:86400,  seedCost:200000,  sellPrice:700000},
+];
+
+const MUTATIONS=[
+  {id:'shiny',    name:'Shiny',    emoji:'✨', mult:1.5, weight:60, color:'#bcd5ff'},
+  {id:'golden',   name:'Golden',   emoji:'🥇', mult:3,   weight:25, color:'#ffd700'},
+  {id:'rainbow',  name:'Rainbow',  emoji:'🌈', mult:7,   weight:12, color:'#ff77ff'},
+  {id:'galactic', name:'Galactic', emoji:'🌌', mult:25,  weight:3,  color:'#a155ff'},
+];
+
+// Seed shop restock — every 10 min, 6 random seeds
+const SEED_SHOP_RESTOCK_SEC = 600;
+const SEED_SHOP_SLOT_COUNT  = 6;
+const SEED_SHOP_RARITY_WEIGHTS = {
+  Common:50, Uncommon:25, Rare:15, Epic:7, Legendary:2.5, Mythic:0.4, Secret:0.1
+};
+const SEED_STOCK_BY_RARITY = {
+  Common:5, Uncommon:3, Rare:2, Epic:1, Legendary:1, Mythic:1, Secret:1
+};
+
+// Hit/mutation roll — every 10 min while growing, 20% chance
+const PLANT_HIT_INTERVAL_SEC = 600;
+const PLANT_HIT_MUTATION_CHANCE = 0.20;
+
+const PLANT_RARITY_COLOR = {
+  Common:'var(--common)', Uncommon:'var(--uncommon)', Rare:'var(--rare)',
+  Epic:'var(--epic)', Legendary:'var(--legendary)', Mythic:'var(--mythic)',
+  Secret:'#c084fc'
+};
+
+function plantById(id){return PLANTS.find(p=>p.id===id);}
+function mutationById(id){return MUTATIONS.find(m=>m.id===id);}
+
+// ══════════════════════════════
 // EGG HATCHERY
 // ══════════════════════════════
 const EGG_TYPES=[
@@ -3731,6 +3923,333 @@ function initEggs(){
   renderEggInventory();
   if(!incuTickInterval){
     incuTickInterval=setInterval(tickIncubators,1000);
+  }
+}
+
+// ══════════════════════════════
+// GARDEN — state + logic
+// ══════════════════════════════
+let seedInventory = [];   // [{id, qty}]
+let gardenPlots   = Array.from({length:6}, (_,i)=>({id:i, seedId:null, plantedAt:null, mutation:null, lastHitAt:null}));
+let harvestInventory = []; // [{seedId, mutation, qty}]
+let seedShopState = {lastRestock:null, stock:[]};
+let gardenTickInterval=null;
+let pendingPlotPick=null;
+
+function rollSeedShopRarity(){
+  const total=Object.values(SEED_SHOP_RARITY_WEIGHTS).reduce((a,b)=>a+b,0);
+  let r=Math.random()*total;
+  for(const [rarity,w] of Object.entries(SEED_SHOP_RARITY_WEIGHTS)){
+    r-=w; if(r<=0) return rarity;
+  }
+  return 'Common';
+}
+
+function restockSeedShop(){
+  const stock=[];
+  for(let i=0;i<SEED_SHOP_SLOT_COUNT;i++){
+    const rar=rollSeedShopRarity();
+    const candidates=PLANTS.filter(p=>p.rarity===rar);
+    const plant=candidates[Math.floor(Math.random()*candidates.length)];
+    const existing=stock.find(s=>s.id===plant.id);
+    if(existing){ existing.qty += SEED_STOCK_BY_RARITY[rar]||1; }
+    else stock.push({id:plant.id, qty:SEED_STOCK_BY_RARITY[rar]||1});
+  }
+  seedShopState={lastRestock:Date.now(), stock};
+}
+
+function ensureSeedShopFresh(){
+  const now=Date.now();
+  if(!seedShopState.lastRestock || (now-seedShopState.lastRestock)/1000 >= SEED_SHOP_RESTOCK_SEC){
+    restockSeedShop();
+    return true;
+  }
+  return false;
+}
+
+function rollMutation(){
+  const total=MUTATIONS.reduce((a,m)=>a+m.weight,0);
+  let r=Math.random()*total;
+  for(const m of MUTATIONS){ r-=m.weight; if(r<=0) return m.id; }
+  return null;
+}
+
+function mutationRank(id){ if(!id) return -1; return MUTATIONS.findIndex(m=>m.id===id); }
+
+function plotProgress(plot){
+  if(!plot.seedId||!plot.plantedAt) return 0;
+  const plant=plantById(plot.seedId); if(!plant) return 0;
+  const elapsed=(Date.now()-plot.plantedAt)/1000;
+  return Math.min(100, (elapsed/plant.growSec)*100);
+}
+
+function plotIsReady(plot){ return plotProgress(plot)>=100; }
+
+function tickGarden(){
+  // Restock if due
+  const restocked=ensureSeedShopFresh();
+  // Update countdown
+  const cd=document.getElementById('seed-shop-countdown');
+  if(cd && seedShopState.lastRestock){
+    const remaining=Math.max(0, SEED_SHOP_RESTOCK_SEC - Math.floor((Date.now()-seedShopState.lastRestock)/1000));
+    const mm=String(Math.floor(remaining/60)).padStart(2,'0');
+    const ss=String(remaining%60).padStart(2,'0');
+    cd.textContent=mm+':'+ss;
+  }
+  if(restocked && document.getElementById('panel-garden')?.classList.contains('active')){
+    renderSeedShop();
+  }
+  // Re-render plots if any growing or just ready
+  const panelActive=document.getElementById('panel-garden')?.classList.contains('active');
+  if(panelActive){
+    renderPlots();
+  }
+}
+
+function renderPlots(){
+  const grid=document.getElementById('plot-grid');
+  if(!grid) return;
+  grid.innerHTML=gardenPlots.map(plot=>{
+    if(!plot.seedId){
+      return `<div class="plot empty" onclick="openSeedPicker(${plot.id})">
+        <div class="plot-num">#${plot.id+1}</div>
+        <div style="font-size:42px;opacity:.4">🪴</div>
+        <div style="font-size:12px;color:var(--text3);font-weight:700">Empty plot</div>
+        <div style="font-size:10px;color:var(--text3)">Tap to plant a seed</div>
+      </div>`;
+    }
+    const plant=plantById(plot.seedId); if(!plant) return '';
+    const col=PLANT_RARITY_COLOR[plant.rarity]||'var(--text)';
+    const ready=plotIsReady(plot);
+    const pct=plotProgress(plot);
+    const remaining=plant.growSec*(1-pct/100);
+    const timeStr= remaining>=3600 ? Math.ceil(remaining/3600)+'h'
+                 : remaining>=60 ? Math.ceil(remaining/60)+'m'
+                 : Math.max(0,Math.ceil(remaining))+'s';
+    const mut=plot.mutation?mutationById(plot.mutation):null;
+    const mutBadge=mut?`<div class="plot-mut-badge" style="background:${mut.color};color:#0d0d0d">${mut.emoji} ${mut.name}</div>`:'';
+    if(ready){
+      return `<div class="plot ready" id="plot-${plot.id}" onclick="harvestPlot(${plot.id})" style="border-color:${col}">
+        <div class="plot-num">#${plot.id+1}</div>
+        ${mutBadge}
+        <div class="plot-emoji">${plant.emoji}</div>
+        <div class="plot-name" style="color:${col}">${plant.name}</div>
+        <div class="plot-rarity" style="color:${col}">✦ ${plant.rarity}</div>
+        <div class="plot-time" style="color:var(--green-light)">✅ Ready!</div>
+        <div class="plot-bar-wrap"><div class="plot-bar-fill" style="width:100%;background:var(--green-light)"></div></div>
+        <button class="plot-action" style="background:var(--green-light);color:#0d1f12">🧺 Harvest</button>
+      </div>`;
+    }
+    return `<div class="plot growing" id="plot-${plot.id}" onclick="hitPlot(${plot.id})" style="border-color:${col}33">
+      <div class="plot-num">#${plot.id+1}</div>
+      ${mutBadge}
+      <div class="plot-emoji">${plant.emoji}</div>
+      <div class="plot-name">${plant.name}</div>
+      <div class="plot-rarity" style="color:${col}">✦ ${plant.rarity}</div>
+      <div class="plot-time">⏱ ${timeStr} left</div>
+      <div class="plot-bar-wrap"><div class="plot-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div style="font-size:10px;color:var(--text3);font-weight:700">👊 Tap to hit!</div>
+    </div>`;
+  }).join('');
+}
+
+function renderSeedShop(){
+  const grid=document.getElementById('seed-shop-grid');
+  if(!grid) return;
+  if(!seedShopState.stock?.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;color:var(--text2);font-size:13px;text-align:center;padding:18px">Shop is restocking…</div>`;
+    return;
+  }
+  grid.innerHTML=seedShopState.stock.map(s=>{
+    const plant=plantById(s.id); if(!plant) return '';
+    const col=PLANT_RARITY_COLOR[plant.rarity]||'var(--text)';
+    const sold=s.qty<=0;
+    const canAfford=coinsVal>=plant.seedCost;
+    const growMin = plant.growSec>=3600 ? Math.round(plant.growSec/3600)+'h'
+                  : Math.round(plant.growSec/60)+'m';
+    return `<div class="seed-shop-card ${sold?'sold-out':''}" style="border-color:${col}33">
+      <div class="seed-shop-stock">x${s.qty}</div>
+      <span class="seed-shop-emoji">${plant.emoji}</span>
+      <div class="seed-shop-name">${plant.name} Seed</div>
+      <div class="seed-shop-rarity" style="color:${col}">✦ ${plant.rarity}</div>
+      <div class="seed-shop-meta">⏱ ${growMin} • Sells 🪙 ${plant.sellPrice.toLocaleString()}</div>
+      <div class="seed-shop-price">🪙 ${plant.seedCost.toLocaleString()}</div>
+      <button class="seed-buy-btn" style="background:${col};color:#0d0d0d" ${(sold||!canAfford)?'disabled':''} onclick="buySeed('${plant.id}')">
+        ${sold?'Sold out':(canAfford?'Buy seed':'Need 🪙'+plant.seedCost.toLocaleString())}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function renderSeedInventory(){
+  const grid=document.getElementById('seed-inv-grid');
+  if(!grid) return;
+  const items=seedInventory.filter(s=>s.qty>0);
+  document.getElementById('seed-inv-count').textContent=items.length?'('+items.reduce((a,s)=>a+s.qty,0)+' seeds)':'';
+  if(!items.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;color:var(--text3);font-size:12px;padding:14px;text-align:center">No seeds yet — buy some from the shop!</div>`;
+    return;
+  }
+  grid.innerHTML=items.map(s=>{
+    const plant=plantById(s.id); if(!plant) return '';
+    const col=PLANT_RARITY_COLOR[plant.rarity]||'var(--text)';
+    return `<div class="seed-inv-card" style="border-color:${col}33">
+      <div class="seed-inv-qty">x${s.qty}</div>
+      <span class="seed-inv-emoji">${plant.emoji}</span>
+      <div class="seed-inv-name">${plant.name}</div>
+      <div class="seed-inv-rarity" style="color:${col}">✦ ${plant.rarity}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderHarvestInventory(){
+  const grid=document.getElementById('harvest-inv-grid');
+  if(!grid) return;
+  const items=harvestInventory.filter(h=>h.qty>0);
+  document.getElementById('harvest-inv-count').textContent=items.length?'('+items.reduce((a,h)=>a+h.qty,0)+' harvested)':'';
+  if(!items.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;color:var(--text3);font-size:12px;padding:14px;text-align:center">Nothing harvested yet — plant some seeds!</div>`;
+    return;
+  }
+  grid.innerHTML=items.map((h,idx)=>{
+    const plant=plantById(h.seedId); if(!plant) return '';
+    const col=PLANT_RARITY_COLOR[plant.rarity]||'var(--text)';
+    const mut=h.mutation?mutationById(h.mutation):null;
+    const price=Math.round(plant.sellPrice * (mut?mut.mult:1));
+    return `<div class="harvest-inv-card" style="border-color:${col}33">
+      <div class="harvest-inv-qty">x${h.qty}</div>
+      <span class="harvest-inv-emoji">${plant.emoji}</span>
+      <div class="harvest-inv-name">${plant.name}</div>
+      <div class="harvest-inv-mut" style="color:${mut?mut.color:'var(--text3)'}">${mut?mut.emoji+' '+mut.name:'• Normal'}</div>
+      <div class="harvest-inv-price">🪙 ${price.toLocaleString()} ea</div>
+      <button class="harvest-sell-btn" onclick="sellHarvest(${idx})">Sell 1</button>
+    </div>`;
+  }).join('');
+}
+
+function buySeed(id){
+  const plant=plantById(id); if(!plant) return;
+  const stock=seedShopState.stock.find(s=>s.id===id);
+  if(!stock||stock.qty<=0){toast('🌰 Sold out!');return}
+  if(coinsVal<plant.seedCost){toast('🪙 Need '+plant.seedCost.toLocaleString()+' coins!');return}
+  coinsVal-=plant.seedCost; updateStats(); bump('s-coin');
+  stock.qty--;
+  const existing=seedInventory.find(s=>s.id===id);
+  if(existing) existing.qty++;
+  else seedInventory.push({id, qty:1});
+  spawnFloat('-'+plant.seedCost.toLocaleString(),'🪙','var(--red)',document.querySelector('.stat-pill.s-coin'));
+  toast(plant.emoji+' '+plant.name+' seed added to inventory!','rgba(109,186,126,.5)');
+  renderSeedShop(); renderSeedInventory();
+  scheduleSave();
+}
+
+function openSeedPicker(plotId){
+  const available=seedInventory.filter(s=>s.qty>0);
+  if(!available.length){toast('🌰 No seeds! Buy some from the seed shop below.');return}
+  pendingPlotPick=plotId;
+  document.getElementById('seed-picker-plot').textContent='#'+(plotId+1);
+  const list=document.getElementById('seed-picker-list');
+  list.innerHTML=available.map(s=>{
+    const plant=plantById(s.id); if(!plant) return '';
+    const col=PLANT_RARITY_COLOR[plant.rarity]||'var(--text)';
+    return `<div class="seed-picker-card" style="border-color:${col}33" onclick="plantSeed('${plant.id}')">
+      <div style="position:absolute;top:6px;right:8px;background:var(--green-light);color:#0d1f12;font-size:10px;font-weight:900;border-radius:20px;padding:1px 7px">x${s.qty}</div>
+      <div style="font-size:32px;margin-bottom:4px">${plant.emoji}</div>
+      <div style="font-weight:800;font-size:12px">${plant.name}</div>
+      <div style="font-size:10px;font-weight:800;color:${col}">✦ ${plant.rarity}</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px">⏱ ${plant.growSec>=3600?Math.round(plant.growSec/3600)+'h':Math.round(plant.growSec/60)+'m'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('seed-picker-bg').style.display='flex';
+}
+
+function closeSeedPicker(e){
+  if(!e || e.target===document.getElementById('seed-picker-bg')){
+    document.getElementById('seed-picker-bg').style.display='none';
+    pendingPlotPick=null;
+  }
+}
+
+function plantSeed(id){
+  if(pendingPlotPick==null) return;
+  const plot=gardenPlots.find(p=>p.id===pendingPlotPick); if(!plot) return;
+  if(plot.seedId){toast('🪴 Plot is busy!');return}
+  const inv=seedInventory.find(s=>s.id===id);
+  if(!inv||inv.qty<=0) return;
+  const plant=plantById(id); if(!plant) return;
+  inv.qty--;
+  plot.seedId=id; plot.plantedAt=Date.now(); plot.mutation=null; plot.lastHitAt=Date.now();
+  toast(plant.emoji+' '+plant.name+' planted in plot #'+(plot.id+1)+'!','rgba(109,186,126,.5)');
+  closeSeedPicker();
+  renderPlots(); renderSeedInventory();
+  scheduleSave();
+}
+
+function hitPlot(id){
+  const plot=gardenPlots.find(p=>p.id===id); if(!plot||!plot.seedId) return;
+  if(plotIsReady(plot)){ harvestPlot(id); return; }
+  // Visual hit feedback
+  const el=document.getElementById('plot-'+id);
+  if(el){ el.classList.add('hit-flash'); setTimeout(()=>el.classList.remove('hit-flash'),120); }
+  // Mutation roll if 10 min since last hit
+  const now=Date.now();
+  if(!plot.lastHitAt || (now - plot.lastHitAt)/1000 >= PLANT_HIT_INTERVAL_SEC){
+    plot.lastHitAt=now;
+    if(Math.random() < PLANT_HIT_MUTATION_CHANCE){
+      const newMut=rollMutation();
+      // Only upgrade — keep better mutation if it already had one
+      if(mutationRank(newMut) > mutationRank(plot.mutation)){
+        plot.mutation=newMut;
+        const m=mutationById(newMut);
+        toast(m.emoji+' '+m.name+' mutation hit your plant!','rgba(192,132,252,.6)');
+      } else {
+        toast('👊 Hit! No upgrade this time.','rgba(150,150,150,.5)');
+      }
+      renderPlots();
+      scheduleSave();
+    }
+  }
+}
+
+function harvestPlot(id){
+  const plot=gardenPlots.find(p=>p.id===id); if(!plot||!plot.seedId) return;
+  if(!plotIsReady(plot)){toast('⏳ Not ready yet!');return}
+  const seedId=plot.seedId, mutation=plot.mutation;
+  const plant=plantById(seedId);
+  // Add to harvest inventory (stack by seedId+mutation)
+  const existing=harvestInventory.find(h=>h.seedId===seedId && (h.mutation||null)===(mutation||null));
+  if(existing) existing.qty++;
+  else harvestInventory.push({seedId, mutation:mutation||null, qty:1});
+  // Reset plot
+  plot.seedId=null; plot.plantedAt=null; plot.mutation=null; plot.lastHitAt=null;
+  const mut=mutation?mutationById(mutation):null;
+  toast('🧺 Harvested '+plant.emoji+' '+plant.name+(mut?' ('+mut.emoji+' '+mut.name+')':'')+'!','rgba(109,186,126,.6)');
+  renderPlots(); renderHarvestInventory();
+  scheduleSave();
+}
+
+function sellHarvest(idx){
+  const item=harvestInventory[idx]; if(!item||item.qty<=0) return;
+  const plant=plantById(item.seedId); if(!plant) return;
+  const mut=item.mutation?mutationById(item.mutation):null;
+  const price=Math.round(plant.sellPrice * (mut?mut.mult:1));
+  coinsVal+=price; updateStats(); bump('s-coin');
+  item.qty--;
+  if(item.qty<=0) harvestInventory.splice(idx,1);
+  spawnFloat('+'+price.toLocaleString(),'🪙','var(--green-light)',document.querySelector('.stat-pill.s-coin'));
+  toast('🪙 +'+price.toLocaleString()+' from '+plant.emoji+' '+plant.name+(mut?' ('+mut.name+')':'')+'!','rgba(245,166,35,.5)');
+  renderHarvestInventory();
+  scheduleSave();
+}
+
+function initGarden(){
+  ensureSeedShopFresh();
+  renderPlots();
+  renderSeedInventory();
+  renderSeedShop();
+  renderHarvestInventory();
+  if(!gardenTickInterval){
+    gardenTickInterval=setInterval(tickGarden,1000);
   }
 }
 
@@ -4651,6 +5170,10 @@ async function saveGameState(){
       id: i.id, state: i.state, progress: i.progress,
       startTime: i.startTime, eggId: i.egg?.id || null, result: i.result
     })),
+    seed_inventory: seedInventory,
+    garden_plots: gardenPlots,
+    harvest_inventory: harvestInventory,
+    seed_shop_state: seedShopState,
     unlocked_secrets: (typeof DINOS!=='undefined')
       ? DINOS.filter(d=>d.secret && d.unlocked).map(d=>d.id) : [],
     updated_at: new Date().toISOString()
@@ -4699,6 +5222,27 @@ async function loadGameState(userId){
   const ei = Array.isArray(data.egg_inventory) ? data.egg_inventory : [];
   eggInventory.length = 0;
   ei.forEach(e => eggInventory.push(e));
+  // Garden state
+  const si = Array.isArray(data.seed_inventory) ? data.seed_inventory : [];
+  seedInventory.length = 0;
+  si.forEach(s => { if(s && s.id && plantById(s.id)) seedInventory.push({id:s.id, qty:Number(s.qty)||0}); });
+  const gp = Array.isArray(data.garden_plots) ? data.garden_plots : null;
+  if(gp){
+    gp.forEach((saved,i) => {
+      if(!gardenPlots[i]) return;
+      gardenPlots[i].seedId    = saved.seedId || null;
+      gardenPlots[i].plantedAt = saved.plantedAt || null;
+      gardenPlots[i].mutation  = saved.mutation || null;
+      gardenPlots[i].lastHitAt = saved.lastHitAt || null;
+    });
+  }
+  const hi = Array.isArray(data.harvest_inventory) ? data.harvest_inventory : [];
+  harvestInventory.length = 0;
+  hi.forEach(h => { if(h && h.seedId && plantById(h.seedId)) harvestInventory.push({seedId:h.seedId, mutation:h.mutation||null, qty:Number(h.qty)||0}); });
+  if(data.seed_shop_state && typeof data.seed_shop_state==='object'){
+    seedShopState.lastRestock = data.seed_shop_state.lastRestock || null;
+    seedShopState.stock = Array.isArray(data.seed_shop_state.stock) ? data.seed_shop_state.stock.filter(s=>s && plantById(s.id)) : [];
+  }
   const ic = Array.isArray(data.incubators) ? data.incubators : null;
   if(ic){
     ic.forEach((saved, i) => {
